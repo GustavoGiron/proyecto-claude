@@ -1,0 +1,2 @@
+Aquí van imágenes del tablero Kanban, inicio, medio y fin, por cada fase.
+igual meter las imagenes en diagramas/tablero.

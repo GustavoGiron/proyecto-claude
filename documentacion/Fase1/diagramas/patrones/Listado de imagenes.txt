@@ -1,0 +1,2 @@
+Los nombres varían porque son los estados que se pueden tomar las funcionalides (ver ejemplo adjunto)
+estado_nombreX

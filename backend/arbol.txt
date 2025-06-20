@@ -1,0 +1,54 @@
+Listado de rutas de carpetas para el volumen Disco XD
+El número de serie del volumen es B6FF-3481
+G:\ARCHIVOS\ESCRITORIO\INGENIERIA\JUNIO 2025\AYD2\AYD2_V1S2025_PROYECTO_G5\BACKEND\APP
+¦   config.py
+¦   database.py
+¦   __init__.py
+¦   
++---api
+¦       clientes_api.py
+¦       departamentos_api.py
+¦       inventario_api.py
+¦       municipios_api.py
+¦       productos_api.py
+¦       __init__.py
+¦       
++---dtos
+¦       clientes_dto.py
+¦       departamentos_dto.py
+¦       inventario_dto.py
+¦       municipios_dto.py
+¦       productos_dto.py
+¦       __init__.py
+¦       
++---models
+¦       clientes_model.py
+¦       departamentos_model.py
+¦       inventario_model.py
+¦       logs_model.py
+¦       municipios_model.py
+¦       productos_model.py
+¦       __init__.py
+¦       
++---repositories
+¦       clientes_repo.py
+¦       departamentos_repo.py
+¦       inventario_repo.py
+¦       logs_repo.py
+¦       municipios_repo.py
+¦       productos_repo.py
+¦       __init__.py
+¦       
++---services
+¦       clientes_service.py
+¦       departamentos_service.py
+¦       inventario_service.py
+¦       municipios_service.py
+¦       productos_service.py
+¦       __init__.py
+¦       
++---utils
+        logger.py
+        validators.py
+        __init__.py
+        

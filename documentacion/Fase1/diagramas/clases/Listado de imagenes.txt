@@ -1,0 +1,6 @@
+Los nombres varían porque son las clases creadas en base a las funcionalidades a desarrollar (ver ejemplo adjunto)
+clases_adapter
+clases_factory
+clases_observer
+clases_proxy
+clases_singleton
