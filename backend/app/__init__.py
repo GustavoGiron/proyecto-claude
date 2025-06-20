@@ -1,5 +1,3 @@
-# backend/app/__init__.py
-
 import os
 from flask import Flask, jsonify
 from flasgger import Swagger
@@ -73,6 +71,31 @@ def create_app():
                     "municipio_id",
                     "tipo_venta_autoriz"
                 ]
+            },"Vendedor": {
+                "type": "object",
+                "properties": {
+                    "id":                   {"type": "integer", "description": "ID único del vendedor"},
+                    "codigo_vendedor":      {"type": "string", "description": "Código automático del vendedor (ej: V001, V002)"},
+                    "nombres":              {"type": "string", "maxLength": 100, "description": "Nombres del vendedor"},
+                    "apellidos":            {"type": "string", "maxLength": 100, "description": "Apellidos del vendedor"},
+                    "nombre_completo":      {"type": "string", "description": "Nombres y apellidos concatenados"},
+                    "telefono":             {"type": "string", "maxLength": 20, "description": "Teléfono del vendedor (formato: 0000-0000)"},
+                    "direccion":            {"type": "string", "description": "Dirección del vendedor"},
+                    "porcentaje_comision":  {
+                                              "type": "number", 
+                                              "minimum": 0, 
+                                              "maximum": 100,
+                                              "description": "Porcentaje de comisión (0-100)"
+                                            },
+                    "fecha_modificacion":   {"type": "string", "format": "date-time", "description": "Fecha de última modificación"},
+                    "usuario_creacion":     {"type": "string", "maxLength": 50, "description": "Usuario que creó el registro"},
+                    "usuario_modificacion": {"type": "string", "maxLength": 50, "description": "Usuario que modificó el registro"}
+                },
+                "required": [
+                    "nombres",
+                    "apellidos",
+                    "porcentaje_comision"
+                ]
             },
             "Departamento": {
                 "type": "object",
@@ -121,13 +144,15 @@ def create_app():
         clientes_bp,
         departamentos_bp,
         productos_bp,
-        inventario_bp
+        inventario_bp,
+        vendedores_bp
     )
 
     app.register_blueprint(clientes_bp,      url_prefix='/api/clientes')
     app.register_blueprint(departamentos_bp, url_prefix='/api/departamentos')
     app.register_blueprint(productos_bp,     url_prefix='/api/productos')
     app.register_blueprint(inventario_bp,    url_prefix='/api/inventario')
+    app.register_blueprint(vendedores_bp,    url_prefix='/api/vendedores')
 
     return app
 
