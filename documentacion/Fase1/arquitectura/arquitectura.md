@@ -21,7 +21,7 @@ La arquitectura por capas proporciona una organización clara, modular y manteni
 Interfaz de usuario accesible por gerentes, clientes, vendedores, aduanas y proveedores. Esta capa captura entradas, presenta datos y se comunica con la API del servidor.
 
 **Tecnologías esperadas:**
-- React (SPA)
+- Angular (SPA)
 - Api REST
 
 
@@ -74,13 +74,13 @@ Gestionar el acceso a la base de datos, incluyendo consultas, inserciones, actua
 
 # Elección de Frameworks para IMPORCOMGUA
 
-## Frontend: React
+## Frontend: Angular
 
-### ¿Por qué React?
+### ¿Por qué Angular?
 
 **Desde la perspectiva del negocio:**
 
-- **Interfaz Moderna y Profesional**: React permite crear una experiencia de usuario atractiva que proyecta profesionalismo ante clientes y proveedores
+- **Interfaz Moderna y Profesional**: Angular permite crear una experiencia de usuario atractiva que proyecta profesionalismo ante clientes y proveedores
 - **Velocidad de Uso**: Las pantallas cargan rápido y responden inmediatamente, lo que significa que los vendedores pueden atender más clientes en menos tiempo
 - **Facilidad de Capacitación**: La interfaz es intuitiva, similar a aplicaciones web modernas que el personal ya conoce
 - **Adaptabilidad**: Se ve bien tanto en computadoras de escritorio como en tablets, útil para mostrar catálogos a clientes

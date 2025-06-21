@@ -7,3 +7,4 @@ from .clientes_model      import Cliente
 from .productos_model     import Producto
 from .vendedores_model    import Vendedor
 from .logs_model          import Log
+from .ventas_model        import Venta, DetalleVenta, Pago, Comision

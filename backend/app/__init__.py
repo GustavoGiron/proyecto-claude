@@ -112,6 +112,85 @@ def create_app():
                     "departamento_id":  {"type": "integer"},
                     "nombre":           {"type": "string"}
                 }
+            },
+            "Venta": {
+                "type": "object",
+                "properties": {
+                    "id":                   {"type": "integer"},
+                    "fecha_venta":          {"type": "string", "format": "date"},
+                    "fecha_salida_bodega":  {"type": "string", "format": "date"},
+                    "cliente_id":           {"type": "integer"},
+                    "nit_cliente":          {"type": "string"},
+                    "numero_envio":         {"type": "string"},
+                    "tipo_pago":            {"type": "string", "enum": ["Contado", "Credito"]},
+                    "dias_credito":         {"type": "integer"},
+                    "fecha_vencimiento":    {"type": "string", "format": "date"},
+                    "vendedor_id":          {"type": "integer"},
+                    "numero_factura_dte":   {"type": "string"},
+                    "nombre_factura":       {"type": "string"},
+                    "nit_factura":          {"type": "string"},
+                    "subtotal_venta":       {"type": "number"},
+                    "iva_venta":            {"type": "number"},
+                    "total_venta":          {"type": "number"},
+                    "estado_venta":         {"type": "string", "enum": ["Vigente", "Anulada"]},
+                    "estado_cobro":         {"type": "string", "enum": ["Pendiente", "Parcial", "Pagada", "Morosa"]},
+                    "estado_entrega":       {"type": "string", "enum": ["Pendiente", "Entregado"]},
+                    "fecha_pago_completo":  {"type": "string", "format": "date"},
+                    "saldo_pendiente":      {"type": "number"},
+                    "fecha_modificacion":   {"type": "string", "format": "date-time"},
+                    "usuario_creacion":     {"type": "string"},
+                    "usuario_modificacion": {"type": "string"}
+                }
+            },
+            "DetalleVenta": {
+                "type": "object",
+                "properties": {
+                    "id":                       {"type": "integer"},
+                    "venta_id":                 {"type": "integer"},
+                    "producto_id":              {"type": "integer"},
+                    "cantidad":                 {"type": "integer"},
+                    "cantidad_unidades":        {"type": "integer"},
+                    "precio_por_fardo_paquete": {"type": "number"},
+                    "subtotal_linea":           {"type": "number"},
+                    "iva_linea":                {"type": "number"},
+                    "total_linea":              {"type": "number"},
+                    "estado_linea":             {"type": "string", "enum": ["Pendiente", "Entregado"]},
+                    "observaciones":            {"type": "string"},
+                    "usuario_creacion":         {"type": "string"}
+                }
+            },
+            "Pago": {
+                "type": "object",
+                "properties": {
+                    "id":                   {"type": "integer"},
+                    "venta_id":             {"type": "integer"},
+                    "numero_recibo_caja":   {"type": "string"},
+                    "fecha_pago":           {"type": "string", "format": "date"},
+                    "banco":                {"type": "string", "enum": ["Industrial", "Banrural", "G&T", "BAM"]},
+                    "numero_cuenta":        {"type": "string"},
+                    "numero_transferencia": {"type": "string"},
+                    "monto_abono":          {"type": "number"},
+                    "saldo_anterior":       {"type": "number"},
+                    "saldo_actual":         {"type": "number"},
+                    "fecha_creacion":       {"type": "string", "format": "date-time"},
+                    "usuario_creacion":     {"type": "string"}
+                }
+            },
+            "Comision": {
+                "type": "object",
+                "properties": {
+                    "id":                   {"type": "integer"},
+                    "venta_id":             {"type": "integer"},
+                    "vendedor_id":          {"type": "integer"},
+                    "total_neto_venta":     {"type": "number"},
+                    "porcentaje_aplicado":  {"type": "number"},
+                    "monto_comision":       {"type": "number"},
+                    "estado_comision":      {"type": "string", "enum": ["Pendiente", "Pagada"]},
+                    "fecha_generacion":     {"type": "string", "format": "date-time"},
+                    "fecha_pago":           {"type": "string", "format": "date"},
+                    "usuario_pago":         {"type": "string"},
+                    "observaciones":        {"type": "string"}
+                }
             }
         }
     }
@@ -145,7 +224,8 @@ def create_app():
         departamentos_bp,
         productos_bp,
         inventario_bp,
-        vendedores_bp
+        vendedores_bp,
+        ventas_bp
     )
 
     app.register_blueprint(clientes_bp,      url_prefix='/api/clientes')
@@ -153,6 +233,7 @@ def create_app():
     app.register_blueprint(productos_bp,     url_prefix='/api/productos')
     app.register_blueprint(inventario_bp,    url_prefix='/api/inventario')
     app.register_blueprint(vendedores_bp,    url_prefix='/api/vendedores')
+    app.register_blueprint(ventas_bp,        url_prefix='/api/ventas')
 
     return app
 

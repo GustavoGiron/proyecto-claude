@@ -81,7 +81,40 @@ Se está trabajando en sincronizar esta lógica para evitar conflictos.
 - **¿Tengo algún impedimento?**: No.
 ---
 
-## Daily 3 - 20/06/2025
+## Daily 3 - 19/06/2025
+
+### Integrante 1 - Kevin Estuardo Secaida Molina
+- **¿Qué hice ayer?**: Terminé de validar que la edición de clientes funcione correctamente con el backend, solucionando el problema de validación del campo numero_cliente. También mejoré la experiencia de usuario al regresar desde el formulario. El módulo de clientes está completamente funcional, validando correctamente todos los campos esperados.
+- **¿Qué haré hoy?**: Voy a trabajar en la implementación del módulo de vendedores, creando el formulario y asegurando que se integre correctamente con el backend. También revisaré los endpoints necesarios para las operaciones CRUD de vendedores.
+- **¿Tengo algún impedimento?**: Si, dado que aun no se han subido los endpoints de vendedores al repositorio, no podré avanzar con la integración del formulario hasta que estén disponibles.
+
+### Integrante 2 - Pedro Luis Pu Tavico
+- **¿Qué hice ayer?**: Ayer inicié con la implementación del frontend, trabajando específicamente en la vista de clientes.
+- **¿Qué haré hoy?**: Hoy realicé la creación del dashboard principal y desarrollé los módulos de mantenimiento para el sistema.
+- **¿Tengo algún impedimento?**: No tengo ningún impedimento por el momento.
+
+### Integrante 3 - [Nombre]
+- **¿Qué hice ayer?**: [Actividades del día anterior]
+- **¿Qué haré hoy?**: [Actividades planificadas para hoy]
+- **¿Tengo algún impedimento?**: [Sí/No - Descripción si aplica]
+
+### Integrante 4 - [Nombre]
+- **¿Qué hice ayer?**: [Actividades del día anterior]
+- **¿Qué haré hoy?**: [Actividades planificadas para hoy]
+- **¿Tengo algún impedimento?**: [Sí/No - Descripción si aplica]
+
+### Integrante 5 – Oscar Eduardo Morales Girón
+
+* **¿Qué hice ayer?**: Implementé el módulo Productos en el backend: definí la entidad, creé el repositorio con métodos CRUD y búsqueda, desarrollé la lógica de negocio, elaboré los schemas de validación y expuse los endpoints REST. 
+* **¿Qué haré hoy?**: Validaré que el core de negocio concuerde con los casos de uso existentes y actualizaré los stakeholders en los diagramas de fase 1. Además, revisaré que la documentación describa correctamente estos procesos.
+* **¿Tengo algún impedimento?**: Sí. Necesito confirmar con el equipo de frontend el formato exacto de la respuesta de los endpoints de Productos (estructura y nombres de campos) para garantizar una integración correcta.
+
+### Integrante 6 - [Nombre]
+- **¿Qué hice ayer?**: [Actividades del día anterior]
+- **¿Qué haré hoy?**: [Actividades planificadas para hoy]
+- **¿Tengo algún impedimento?**: [Sí/No - Descripción si aplica]
+
+## Daily 4 - 20/06/2025
 
 ### Integrante 1 - [Nombre]
 - **¿Qué hice ayer?**: [Actividades del día anterior]

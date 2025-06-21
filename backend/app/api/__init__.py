@@ -6,3 +6,4 @@ from .departamentos_api import departamentos_bp
 from .municipios_api import municipios_bp
 from .inventario_api import inventario_bp
 from .vendedores_api import vendedores_bp
+from .ventas_api import ventas_bp

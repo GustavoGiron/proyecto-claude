@@ -1,0 +1,205 @@
+<div class="bg-gray-50">
+    <div class="container mx-auto px-4 py-6 max-w-6xl">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div class="p-6">
+
+                <!-- Loading State -->
+                <div *ngIf="loading" class="text-center">
+                    Cargando datos del cliente...
+                </div>
+
+                <!-- Error State -->
+                <div *ngIf="error && id" class="text-center">
+                    <div class="text-red-600">Error: {{ error }}</div>
+                    <div class="mt-4">
+                        <button (click)="cancelar()"
+                            class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            Volver a la lista
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Form -->
+                <div *ngIf="!loading && !(error && id)">
+                    <div class="mb-6 pb-2 border-b border-gray-200">
+                        <h2 class="text-2xl font-semibold text-gray-800 mb-2 text-center">{{ getTitulo() }}</h2>
+                    </div>
+
+                    <form [formGroup]="clienteForm" (ngSubmit)="onSubmit()" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                            <!-- Nombre del contacto -->
+                            <div>
+                                <label for="nombre_contacto" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Nombre del Contacto <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" id="nombre_contacto" formControlName="nombre_contacto"
+                                    placeholder="Ingrese el nombre del contacto"
+                                    [class]="'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' + (esVer ? ' bg-gray-50 cursor-not-allowed' : '')" />
+                                <div
+                                    *ngIf="clienteForm.get('nombre_contacto')?.invalid && clienteForm.get('nombre_contacto')?.touched">
+                                    <small class="text-danger">Este campo es obligatorio.</small>
+                                </div>
+                            </div>
+
+                            <!-- Nombre del negocio -->
+                            <div>
+                                <label for="nombre_negocio" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Nombre del Negocio
+                                </label>
+                                <input type="text" id="nombre_negocio" formControlName="nombre_negocio"
+                                    placeholder="Ingrese el nombre del negocio"
+                                    [class]="'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' + (esVer ? ' bg-gray-50 cursor-not-allowed' : '')" />
+                                <div
+                                    *ngIf="clienteForm.get('nombre_negocio')?.invalid && clienteForm.get('nombre_negocio')?.touched">
+                                    <small class="text-danger">Este campo es obligatorio.</small>
+                                </div>
+                            </div>
+
+
+                            <!-- Departamento -->
+                            <div>
+                                <label for="departamento_id" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Departamento <span class="text-red-500">*</span>
+                                </label>
+                                <select id="departamento_id" formControlName="departamento_id"
+                                    [class]="'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' + (esVer ? ' bg-gray-50 cursor-not-allowed' : '')">
+                                    <option value="">
+                                        {{ loadingDepartamentos ? 'Cargando departamentos...' : 'Seleccione un
+                                        departamento' }}
+                                    </option>
+                                    <option *ngFor="let departamento of departamentos" [value]="departamento.id">
+                                        {{ departamento.nombre }}
+                                    </option>
+                                </select>
+
+                                <div
+                                    *ngIf="clienteForm.get('departamento_id')?.invalid && clienteForm.get('departamento_id')?.touched">
+                                    <small class="text-danger">Por favor selecciona un departamento.</small>
+                                </div>
+                            </div>
+
+                            <!-- Municipio -->
+                            <div>
+                                <label for="municipio_id" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Municipio <span class="text-red-500">*</span>
+                                </label>
+                                <select id="municipio_id" formControlName="municipio_id"
+                                    [class]="'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' + (esVer ? ' bg-gray-50 cursor-not-allowed' : '')">
+                                    <option value="">
+                                        {{ loadingMunicipios ? 'Cargando municipios...' :
+                                        !clienteForm.get('departamento_id')?.value ? 'Seleccione primero un
+                                        departamento' :
+                                        'Seleccione un municipio' }}
+                                    </option>
+                                    <option *ngFor="let municipio of municipios" [value]="municipio.id">
+                                        {{ municipio.nombre }}
+                                    </option>
+                                </select>
+                                <div
+                                    *ngIf="clienteForm.get('municipio_id')?.invalid && clienteForm.get('municipio_id')?.touched">
+                                    <small class="text-danger">Por favor selecciona un municipio.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dirección -->
+                        <div>
+                            <label for="direccion" class="block text-sm font-semibold text-gray-700 mb-2">
+                                Dirección Completa
+                            </label>
+                            <textarea id="direccion" formControlName="direccion" rows="2"
+                                placeholder="Ingrese la dirección completa"
+                                [class]="'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' + (esVer ? ' bg-gray-50 cursor-not-allowed' : '')">
+                            </textarea>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                            <!-- NIT -->
+                            <div>
+                                <label for="nit" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    NIT
+                                </label>
+                                <input type="text" id="nit" formControlName="nit" placeholder="Ingrese el NIT"
+                                    [class]="'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' + (esVer ? ' bg-gray-50 cursor-not-allowed' : '')" />
+                            </div>
+
+                            <!-- Encargado en bodega -->
+                            <div>
+                                <label for="encargado_bodega" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Encargado en Bodega
+                                </label>
+                                <input type="text" id="encargado_bodega" formControlName="encargado_bodega"
+                                    placeholder="Ingrese el nombre del encargado"
+                                    [class]="'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' + (esVer ? ' bg-gray-50 cursor-not-allowed' : '')" />
+                            </div>
+
+                            <!-- Teléfono -->
+                            <div>
+                                <label for="phone" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Teléfono
+                                </label>
+                                <input type="text" id="telefono" formControlName="telefono"
+                                    placeholder="Ingrese el número de teléfono"
+                                    [class]="'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' + (esVer ? ' bg-gray-50 cursor-not-allowed' : '')" />
+                                <div
+                                    *ngIf="clienteForm.get('telefono')?.invalid && clienteForm.get('telefono')?.touched">
+                                    <small class="text-danger">Solo se permiten números.</small>
+                                </div>
+                            </div>
+
+                            <!-- Tipo de venta autorizado -->
+                            <div>
+                                <label for="tipo_venta_autoriz" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Tipo de Venta Autorizado <span class="text-red-500">*</span>
+                                </label>
+                                <select id="tipo_venta_autoriz" formControlName="tipo_venta_autoriz"
+                                    [class]="'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' + (esVer ? ' bg-gray-50 cursor-not-allowed' : '')">
+                                    <option value="">Seleccione tipo de venta</option>
+                                    <option value="Credito">Credito</option>
+                                    <option value="Contado">Contado</option>
+                                    <option value="Ambas">Ambas</option>
+                                </select>
+                                <div
+                                    *ngIf="clienteForm.get('tipo_venta_autoriz')?.invalid && clienteForm.get('tipo_venta_autoriz')?.touched">
+                                    <small class="text-danger">Solo se permiten números.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Observaciones -->
+                        <div>
+                            <label for="observaciones" class="block text-sm font-semibold text-gray-700 mb-2">
+                                Observaciones
+                            </label>
+                            <textarea id="observaciones" formControlName="observaciones" rows="3"
+                                placeholder="Ingrese observaciones adicionales"
+                                [class]="'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' + (esVer ? ' bg-gray-50 cursor-not-allowed' : '')">
+                            </textarea>
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                            <button type="button" (click)="cancelar()"
+                                class="px-6 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+                                Cancelar
+                            </button>
+
+                            <button *ngIf="esVer" type="button" (click)="aceptar()"
+                                class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                Aceptar
+                            </button>
+
+                            <button *ngIf="!esVer" type="submit"
+                                class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                [disabled]="clienteForm.invalid" [class.disabled]="clienteForm.invalid">
+                                {{ esCrear ? 'Guardar Cliente' : 'Actualizar Cliente' }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
