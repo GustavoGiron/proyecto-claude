@@ -1,0 +1,194 @@
+<div class="bg-gray-50">
+    <div class="container mx-auto px-4 py-6 max-w-7xl">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div class="p-6">
+
+                <!-- Loading State -->
+                <div *ngIf="loading" class="text-center">
+                    Cargando inventario...
+                </div>
+
+                <!-- Error State -->
+                <div *ngIf="error" class="text-center text-red-600">
+                    Error: {{ error }}
+                </div>
+
+                <!-- Main Content -->
+                <div *ngIf="!loading && !error">
+                    <div class="mb-8">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                            <div>
+                                <h2 class="text-2xl font-semibold text-gray-800">Inventario de Stock</h2>
+                                <p class="text-sm text-gray-600 mt-1">{{ totalProductos }} productos • {{ totalStock }} unidades totales</p>
+                            </div>
+                            <button (click)="recargar()"
+                                class="inline-flex items-center px-3 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium rounded-lg hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transform hover:scale-105 transition-all duration-200 shadow-lg"
+                                [disabled]="loading">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" [class.animate-spin]="loading">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                                Recargar
+                            </button>
+                        </div>
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <div class="flex-1 relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                    </svg>
+                                </div>
+                                <input type="text" placeholder="Buscar producto o código" [value]="busqueda"
+                                    (input)="handleBusquedaChange($event)"
+                                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm text-gray-900 placeholder-gray-500" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resumen Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                                    </svg>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-blue-600">Total Productos</p>
+                                    <p class="text-2xl font-semibold text-blue-900">{{ totalProductos }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gradient-to-r from-green-50 to-green-100 rounded-lg p-4 border border-green-200">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-green-600">Stock Total</p>
+                                    <p class="text-2xl font-semibold text-green-900">{{ totalStock }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg p-4 border border-purple-200">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-purple-600">Stock Disponible</p>
+                                    <p class="text-2xl font-semibold text-purple-900">{{ totalDisponible }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabla -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full table-auto">
+                            <thead>
+                                <tr class="bg-gray-50 border-b border-gray-200">
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        Código
+                                    </th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        Producto
+                                    </th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        Stock Total
+                                    </th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        Disponible
+                                    </th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        Apartado
+                                    </th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        Última Actualización
+                                    </th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        Usuario
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr *ngIf="inventariosPaginados.length === 0">
+                                    <td colspan="7" class="px-4 py-8 text-center text-gray-500">
+                                        {{ busqueda ? 'No se encontraron productos que coincidan con la búsqueda' : 'No hay productos en inventario' }}
+                                    </td>
+                                </tr>
+                                <tr *ngFor="let item of inventariosPaginados" class="hover:bg-gray-50 transition-colors">
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold bg-gray-100 text-gray-800 rounded-full">
+                                            {{ item.producto.codigo_producto }}
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-4 text-sm text-gray-900">
+                                        <div class="font-medium text-gray-900">
+                                            {{ item.producto.nombre_producto }}
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-center">
+                                        <span class="inline-flex px-3 py-1 text-sm font-semibold bg-blue-100 text-blue-800 rounded-full">
+                                            {{ item.stock_total }}
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-center">
+                                        <span class="inline-flex px-3 py-1 text-sm font-semibold rounded-full"
+                                            [ngClass]="{
+                                                'bg-red-100 text-red-800': item.stock_disponible === 0,
+                                                'bg-yellow-100 text-yellow-800': item.stock_disponible > 0 && item.stock_disponible < 10,
+                                                'bg-green-100 text-green-800': item.stock_disponible >= 10
+                                            }">
+                                            {{ item.stock_disponible }}
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-center">
+                                        <span class="inline-flex px-3 py-1 text-sm font-semibold bg-gray-100 text-gray-800 rounded-full">
+                                            {{ item.stock_apartado }}
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        {{ formatearFecha(item.fecha_ultima_actualizacion) }}
+                                    </td>
+                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        {{ item.usuario_ultima_actualizacion }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Paginación -->
+                    <div *ngIf="totalInventarios > 0"
+                        class="mt-6 flex items-center justify-between border-t border-gray-200 pt-4">
+                        <div class="text-sm text-gray-700">
+                            Mostrando <span class="font-medium">{{ indiceInicio + 1 }}</span> a
+                            <span class="font-medium">{{ Math.min(indiceFin, totalInventarios) }}</span> de
+                            <span class="font-medium">{{ totalInventarios }}</span> productos
+                        </div>
+                        <div class="flex space-x-2">
+                            <button (click)="handleCambioPagina(paginaActual - 1)" [disabled]="paginaActual === 1"
+                                [class]="'px-3 py-1 text-sm rounded-md transition-colors ' + (paginaActual === 1 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-gray-200 text-gray-600 hover:bg-gray-300')">
+                                Anterior
+                            </button>
+                            <button *ngFor="let numeroPagina of paginasArray" (click)="handleCambioPagina(numeroPagina)"
+                                [class]="'px-3 py-1 text-sm rounded-md transition-colors ' + (paginaActual === numeroPagina ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300')">
+                                {{ numeroPagina }}
+                            </button>
+                            <button (click)="handleCambioPagina(paginaActual + 1)"
+                                [disabled]="paginaActual === totalPaginas"
+                                [class]="'px-3 py-1 text-sm rounded-md transition-colors ' + (paginaActual === totalPaginas ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-gray-200 text-gray-600 hover:bg-gray-300')">
+                                Siguiente
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

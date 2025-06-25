@@ -16,7 +16,7 @@ class VentaSchema(ma.SQLAlchemyAutoSchema):
             "numero_envio",
             "tipo_pago",
             "dias_credito",
-            "fecha_vencimiento",
+            #"fecha_vencimiento",
             "vendedor_id",
             "numero_factura_dte",
             "nombre_factura",
@@ -37,14 +37,15 @@ class VentaSchema(ma.SQLAlchemyAutoSchema):
     tipo_pago = fields.String(validate=lambda x: x in ['Contado', 'Credito'])
     
     @validates('cliente_id')
-    def validate_cliente_id(self, value):
+    def validate_cliente_id(self, value, **kwargs):  # ← Agregado **kwargs
         if not value or value <= 0:
             raise ValidationError('El ID del cliente es requerido y debe ser mayor a 0')
     
     @validates('vendedor_id')
-    def validate_vendedor_id(self, value):
+    def validate_vendedor_id(self, value, **kwargs):  # ← Agregado **kwargs
         if not value or value <= 0:
             raise ValidationError('El ID del vendedor es requerido y debe ser mayor a 0')
+
 
 class DetalleVentaSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
@@ -66,14 +67,15 @@ class DetalleVentaSchema(ma.SQLAlchemyAutoSchema):
         )
     
     @validates('producto_id')
-    def validate_producto_id(self, value):
+    def validate_producto_id(self, value, **kwargs):  # ← Agregado **kwargs
         if not value or value <= 0:
             raise ValidationError('El ID del producto es requerido y debe ser mayor a 0')
     
     @validates('cantidad')
-    def validate_cantidad(self, value):
+    def validate_cantidad(self, value, **kwargs):  # ← Agregado **kwargs
         if not value or value <= 0:
             raise ValidationError('La cantidad es requerida y debe ser mayor a 0')
+
 
 class PagoSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
@@ -97,7 +99,7 @@ class PagoSchema(ma.SQLAlchemyAutoSchema):
     banco = fields.String(validate=lambda x: x in ['Industrial', 'Banrural', 'G&T', 'BAM'])
     
     @validates('numero_recibo_caja')
-    def validate_numero_recibo_caja(self, value):
+    def validate_numero_recibo_caja(self, value, **kwargs):  # ← Agregado **kwargs
         if not value or len(value.strip()) == 0:
             raise ValidationError('El número de recibo de caja es requerido')
 
@@ -133,7 +135,7 @@ class CrearVentaSchema(Schema):
     detalles = fields.List(fields.Nested('DetalleVentaCreateSchema'), required=True)
     
     @validates('detalles')
-    def validate_detalles(self, value):
+    def validate_detalles(self, value, **kwargs):  # ← Agregado **kwargs
         if not value or len(value) == 0:
             raise ValidationError('Debe incluir al menos un producto en la venta')
 
@@ -144,12 +146,12 @@ class DetalleVentaCreateSchema(Schema):
     observaciones = fields.String(allow_none=True)
     
     @validates('cantidad')
-    def validate_cantidad(self, value):
+    def validate_cantidad(self, value, **kwargs):  # ← Agregado **kwargs
         if value <= 0:
             raise ValidationError('La cantidad debe ser mayor a 0')
     
     @validates('precio_por_fardo_paquete')
-    def validate_precio(self, value):
+    def validate_precio(self, value, **kwargs):  # ← Agregado **kwargs
         if value <= 0:
             raise ValidationError('El precio debe ser mayor a 0')
 
@@ -165,6 +167,6 @@ class RegistrarPagoSchema(Schema):
     monto_abono = fields.Decimal(required=True)
     
     @validates('monto_abono')
-    def validate_monto_abono(self, value):
+    def validate_monto_abono(self, value, **kwargs):  # ← Agregado **kwargs
         if value <= 0:
             raise ValidationError('El monto del abono debe ser mayor a 0')

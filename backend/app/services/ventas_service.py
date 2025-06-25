@@ -77,14 +77,10 @@ class VentaService:
             'estado_venta': 'Vigente',
             'estado_cobro': 'Pendiente',
             'estado_entrega': 'Pendiente',
-            'usuario_creacion': usuario_creacion
+            'usuario_creacion': usuario_creacion,
         }
         
-        # Calcular fecha de vencimiento si es crédito
-        if venta_data['tipo_pago'] == 'Credito' and venta_data['dias_credito'] > 0:
-            from datetime import timedelta
-            venta_data['fecha_vencimiento'] = venta_data['fecha_venta'] + timedelta(days=venta_data['dias_credito'])
-        
+
         # Validar stock y calcular totales
         subtotal = Decimal('0.00')
         iva_total = Decimal('0.00')
@@ -135,6 +131,7 @@ class VentaService:
         venta_data['saldo_pendiente'] = subtotal + iva_total
         
         # Crear la venta
+        #venta_data.pop('fecha_vencimiento', None)
         venta, error = VentaRepo.create(venta_data)
         if error:
             return None, error

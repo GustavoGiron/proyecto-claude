@@ -1,0 +1,177 @@
+<div class="bg-gray-50">
+    <div class="container mx-auto px-4 py-6 max-w-6xl">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div class="p-6">
+
+                <!-- Estado de carga -->
+                <div *ngIf="loading" class="text-center">
+                    Cargando...
+                </div>
+
+                <!-- Formulario -->
+                <div *ngIf="!loading">
+                    <div class="mb-6 pb-2 border-b border-gray-200">
+                        <h2 class="text-2xl font-semibold text-gray-800 mb-2 text-center">Ingreso de Inventario</h2>
+                    </div>
+
+                    <form [formGroup]="inventarioForm" (ngSubmit)="onSubmit()" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Fecha de ingreso -->
+                            <div>
+                                <label for="fecha_ingreso" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Fecha de ingreso <span class="text-red-500">*</span>
+                                </label>
+                                <input type="date" id="fecha_ingreso" formControlName="fecha_ingreso"
+                                    [class]="'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ' + (esInvalido('fecha_ingreso') ? 'border-red-500' : 'border-gray-300')">
+                                <div *ngIf="esInvalido('fecha_ingreso')" class="text-red-500 text-sm mt-1">
+                                    {{ obtenerMensajeError('fecha_ingreso') }}
+                                </div>
+                            </div>
+
+                            <!-- Producto -->
+                            <div>
+                                <label for="producto_id" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Producto <span class="text-red-500">*</span>
+                                </label>
+                                <select id="producto_id" formControlName="producto_id"
+                                    [class]="'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ' + (esInvalido('producto_id') ? 'border-red-500' : 'border-gray-300')">
+                                    <option value="">Seleccione un producto</option>
+                                    <option *ngFor="let producto of productos" [value]="producto.id">
+                                        {{ producto.codigo_producto }} - {{ producto.nombre_producto }}
+                                    </option>
+                                </select>
+                                <div *ngIf="esInvalido('producto_id')" class="text-red-500 text-sm mt-1">
+                                    {{ obtenerMensajeError('producto_id') }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Cantidad en fardos/paquetes -->
+                            <div>
+                                <label for="cantidad_fardos_paquetes"
+                                    class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Cantidad en fardos/paquetes <span class="text-red-500">*</span>
+                                </label>
+                                <input type="number" id="cantidad_fardos_paquetes"
+                                    formControlName="cantidad_fardos_paquetes" min="1" placeholder="Ingrese la cantidad"
+                                    [class]="'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ' + (esInvalido('cantidad_fardos_paquetes') ? 'border-red-500' : 'border-gray-300')">
+                                <div *ngIf="esInvalido('cantidad_fardos_paquetes')" class="text-red-500 text-sm mt-1">
+                                    {{ obtenerMensajeError('cantidad_fardos_paquetes') }}
+                                </div>
+                            </div>
+
+                            <!-- Unidades por fardo/paquete -->
+                            <div>
+                                <label for="unidades_por_fardo_paquete"
+                                    class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Unidades por fardo/paquete <span class="text-red-500">*</span>
+                                </label>
+                                <input type="number" id="unidades_por_fardo_paquete"
+                                    formControlName="unidades_por_fardo_paquete" min="1" readonly
+                                    placeholder="Auto-calculado"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            </div>
+
+                            <!-- Unidades totales -->
+                            <div>
+                                <label for="unidades_totales" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Unidades totales <span class="text-red-500">*</span>
+                                </label>
+                                <input type="number" id="unidades_totales" formControlName="unidades_totales" readonly
+                                    placeholder="Auto-calculado"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- No. Contenedor -->
+                            <div>
+                                <label for="numero_contenedor" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    No. Contenedor <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" id="numero_contenedor" formControlName="numero_contenedor"
+                                    placeholder="Ingrese el número de contenedor"
+                                    [class]="'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ' + (esInvalido('no_contenedor') ? 'border-red-500' : 'border-gray-300')">
+                                <div *ngIf="esInvalido('numero_contenedor')" class="text-red-500 text-sm mt-1">
+                                    {{ obtenerMensajeError('numero_contenedor') }}
+                                </div>
+                            </div>
+
+                            <!-- No. De DUCA -->
+                            <div>
+                                <label for="numero_duca" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    No. De DUCA <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" id="numero_duca" formControlName="numero_duca"
+                                    placeholder="Ingrese el número de DUCA"
+                                    [class]="'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ' + (esInvalido('no_duca') ? 'border-red-500' : 'border-gray-300')">
+                                <div *ngIf="esInvalido('numero_duca')" class="text-red-500 text-sm mt-1">
+                                    {{ obtenerMensajeError('numero_duca') }}
+                                </div>
+                            </div>
+
+                            <!-- Fecha de DUCA -->
+                            <div>
+                                <label for="fecha_duca" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Fecha de DUCA <span class="text-red-500">*</span>
+                                </label>
+                                <input type="date" id="fecha_duca" formControlName="fecha_duca"
+                                    [class]="'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ' + (esInvalido('fecha_duca') ? 'border-red-500' : 'border-gray-300')">
+                                <div *ngIf="esInvalido('fecha_duca')" class="text-red-500 text-sm mt-1">
+                                    {{ obtenerMensajeError('fecha_duca') }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- No. De DUCA rectificada -->
+                            <div>
+                                <label for="numero_duca_rectificada"
+                                    class="block text-sm font-semibold text-gray-700 mb-2">
+                                    No. De DUCA rectificada
+                                </label>
+                                <input type="text" id="numero_duca_rectificada"
+                                    formControlName="numero_duca_rectificada"
+                                    placeholder="Ingrese el número de DUCA rectificada"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            </div>
+
+                            <!-- Fecha de DUCA rectificada -->
+                            <div>
+                                <label for="fecha_duca_rectificada"
+                                    class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Fecha de DUCA rectificada
+                                </label>
+                                <input type="date" id="fecha_duca_rectificada" formControlName="fecha_duca_rectificada"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            </div>
+                        </div>
+
+                        <!-- Observaciones -->
+                        <div>
+                            <label for="observaciones" class="block text-sm font-semibold text-gray-700 mb-2">
+                                Observaciones
+                            </label>
+                            <textarea id="observaciones" formControlName="observaciones" rows="3"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="Ingrese observaciones adicionales"></textarea>
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                            <button type="button" (click)="cancelar()"
+                                class="px-6 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors">
+                                Cancelar
+                            </button>
+                            <button type="submit"
+                                class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                                Guardar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

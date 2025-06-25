@@ -1,1 +1,179 @@
-<p>Bienvenido</p>
+<main class="max-w-7xl mx-auto px-6 py-8">
+    <!-- Loading Spinner -->
+    <div *ngIf="loading" class="flex justify-center items-center py-12">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <span class="ml-3 text-gray-600">Cargando datos...</span>
+    </div>
+
+    <!-- Contenido principal -->
+    <div *ngIf="!loading">
+        <!-- Panel de Alertas -->
+        <div id="alertasPanel" class="mb-8 bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+            *ngIf="hayAlertas()">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-semibold text-gray-900">
+                    <i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>
+                    Alertas de Inventario
+                </h2>
+                <button (click)="toggleAlertas()"
+                    class="text-gray-500 hover:text-gray-700 transition-colors duration-200">
+                    <i [class]="obtenerIconoAlerta()"></i>
+                </button>
+            </div>
+
+            <div id="alertasContainer" class="space-y-4" *ngIf="mostrarAlertas">
+                <!-- Alertas de Inventario Bajo -->
+                <div *ngFor="let producto of productosStockBajo; let i = index"
+                    class="bg-red-50 border-l-4 border-red-400 p-4 rounded-r-lg animate-fade-in">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-box text-red-400 text-lg"></i>
+                        </div>
+                        <div class="ml-3 flex-1">
+                            <h3 class="text-sm font-medium text-red-800">{{ obtenerEstadoStock(producto) }}</h3>
+                            <p class="text-sm text-red-700 mt-1">
+                                <strong>{{ producto.nombre || producto.codigo || 'Producto' }}</strong>
+                                (Código: {{ producto.codigo }})
+                            </p>
+                            <div class="mt-2 text-xs text-red-600">
+                                <div class="grid grid-cols-3 gap-4">
+                                    <div>
+                                        <span class="font-medium">Disponible:</span> {{ producto.stock }} unidades
+                                    </div>
+                                    <div>
+                                        <span class="font-medium">Total:</span> {{ producto.stock_total }} unidades
+                                    </div>
+                                    <div>
+                                        <span class="font-medium">Apartado:</span> {{ producto.stock_apartado }} unidades
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-xs text-red-600 mt-2">
+                                Se recomienda realizar nuevo pedido.
+                            </p>
+                        </div>
+                        <div class="ml-4 flex-shrink-0">
+                            <button (click)="cerrarAlerta(i)"
+                                class="text-red-400 hover:text-red-600 transition-colors duration-200">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mensaje cuando no hay alertas -->
+        <div *ngIf="!hayAlertas()" class="mb-8 bg-green-50 border-l-4 border-green-400 p-4 rounded-r-lg">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-check-circle text-green-400 text-lg"></i>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium text-green-800">Inventario en buen estado</h3>
+                    <p class="text-sm text-green-700 mt-1">
+                        No hay productos con stock crítico en este momento.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resumen Ejecutivo -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Tarjeta de Inventario -->
+            <div
+                class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-boxes text-green-600 text-2xl"></i>
+                    </div>
+                    <div class="ml-4 flex-1">
+                        <h3 class="text-sm font-medium text-gray-500">Productos en Inventario</h3>
+                        <p class="text-2xl font-semibold text-gray-900">{{ inventarioStock.length }}</p>
+                        <div class="mt-2">
+                            <span *ngIf="productosStockBajo.length > 0"
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                <i class="fas fa-exclamation-triangle mr-1"></i>
+                                {{ productosStockBajo.length }} con stock bajo
+                            </span>
+                            <span *ngIf="productosStockBajo.length === 0"
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <i class="fas fa-check mr-1"></i>
+                                Stock normal
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta de Productos Totales -->
+            <div
+                class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-cube text-indigo-600 text-2xl"></i>
+                    </div>
+                    <div class="ml-4 flex-1">
+                        <h3 class="text-sm font-medium text-gray-500">Total Productos</h3>
+                        <p class="text-2xl font-semibold text-gray-900">{{ totalProductos }}</p>
+                        <div class="mt-2">
+                            <span
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                                <i class="fas fa-database mr-1"></i>
+                                Catálogo completo
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta de Clientes -->
+            <div
+                class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-users text-blue-600 text-2xl"></i>
+                    </div>
+                    <div class="ml-4 flex-1">
+                        <h3 class="text-sm font-medium text-gray-500">Total Clientes</h3>
+                        <p class="text-2xl font-semibold text-gray-900">{{ totalClientes }}</p>
+                        <div class="mt-2">
+                            <span
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                <i class="fas fa-chart-line mr-1"></i>
+                                Activos
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta de Vendedores -->
+            <div
+                class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-user-tie text-purple-600 text-2xl"></i>
+                    </div>
+                    <div class="ml-4 flex-1">
+                        <h3 class="text-sm font-medium text-gray-500">Total Vendedores</h3>
+                        <p class="text-2xl font-semibold text-gray-900">{{ totalVendedores }}</p>
+                        <div class="mt-2">
+                            <span
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                <i class="fas fa-briefcase mr-1"></i>
+                                Equipo activo
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estado de ultimo update -->
+        <div class="text-center text-sm text-gray-500">
+            <i class="fas fa-clock mr-1"></i>
+            Última actualización: {{ ultimaActualizacion }}
+        </div>
+    </div>
+</main>

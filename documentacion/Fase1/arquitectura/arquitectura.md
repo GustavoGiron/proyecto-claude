@@ -63,9 +63,15 @@ Gestionar el acceso a la base de datos, incluyendo consultas, inserciones, actua
 
 ---
 
+### Diagrama de Capas
+![Diagrama de Capas](/documentacion/Fase1/diagramas/arquitectura/Capas.png)
+
 ## Diagrama de la Arquitectura
 
 ![Diagrama Bloques](/documentacion/Fase1/diagramas/arquitectura/diagrama_de_capas.png)
+
+### Diagrama de Componentes
+![Diagrama de Componentes](/documentacion/Fase1/diagramas/arquitectura/Componentes.png)
 
 ## Diagrama de Bloques
 

@@ -19,6 +19,7 @@ class VentaRepo:
     @staticmethod
     def create(venta_data):
         try:
+            #clean_data = {k: v for k, v in venta_data.items() if k != 'fecha_vencimiento'}
             venta = Venta(**venta_data)
             db.session.add(venta)
             db.session.commit()

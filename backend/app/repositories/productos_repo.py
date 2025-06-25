@@ -6,6 +6,10 @@ class ProductoRepo:
     @staticmethod
     def get_all():
         return Producto.query.all()
+    
+    @staticmethod
+    def get_all_activos():
+        return Producto.query.filter_by(estado_producto='Activo').all()
 
     @staticmethod
     def get_by_id(id):
@@ -39,7 +43,7 @@ class ProductoRepo:
             for key, value in producto_data.items():
                 if hasattr(producto, key):
                     setattr(producto, key, value)
-            
+            producto.estado_producto = "Activo"
             db.session.commit()
             return producto, None
         except IntegrityError as e:
@@ -55,8 +59,8 @@ class ProductoRepo:
             producto = Producto.query.get(id)
             if not producto:
                 return False, "Producto no encontrado"
-            
-            db.session.delete(producto)
+            producto.unidades_por_fardo_paquete = 0 
+            producto.estado_producto = "Inactivo"
             db.session.commit()
             return True, None
         except Exception as e:

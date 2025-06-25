@@ -31,9 +31,6 @@ export class ListClienteComponent implements OnInit {
 
     this.clienteService.obtenerClientes().subscribe({
       next: (clientes) => {
-        console.log('Respuesta completa del backend:', clientes);
-        console.log('Número de clientes recibidos:', clientes.length);
-        console.log('Tipo de response:', typeof clientes);
 
         this.clientes = clientes || [];
         this.loading = false;
@@ -62,7 +59,6 @@ export class ListClienteComponent implements OnInit {
     if (confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
       this.clienteService.eliminarCliente(codigo).subscribe({
         next: () => {
-          console.log(`Cliente ${codigo} eliminado correctamente.`);
           this.cargarClientes();
         },
         error: (err) => {

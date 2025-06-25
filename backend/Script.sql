@@ -168,6 +168,23 @@ CREATE TABLE DetalleVentas (
     FOREIGN KEY (ProductoId) REFERENCES Productos(Id)
 );
 
+-- Tabla Pagos
+CREATE TABLE Pagos (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    VentaId INT NOT NULL,
+    NumeroReciboCaja VARCHAR(50) NOT NULL,
+    FechaPago DATE NOT NULL,
+    Banco VARCHAR(50) NOT NULL CHECK (Banco IN ('Industrial', 'Banrural', 'G&T', 'BAM')),
+    NumeroCuenta VARCHAR(30) NOT NULL,
+    NumeroTransferencia VARCHAR(50),
+    MontoAbono DECIMAL(12,2) NOT NULL,
+    SaldoAnterior DECIMAL(12,2) NOT NULL,
+    SaldoActual DECIMAL(12,2) NOT NULL,
+    FechaCreacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UsuarioCreacion VARCHAR(50),
+    FOREIGN KEY (VentaId) REFERENCES Ventas(Id)
+);
+
 -- Tabla Comisiones
 CREATE TABLE Comisiones (
     Id INT AUTO_INCREMENT PRIMARY KEY,

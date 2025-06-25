@@ -1,1 +1,85 @@
-<p>dashboard-procesos works!</p>
+<div class="container mx-auto px-4 py-12 max-w-6xl">
+    <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-gray-800 mb-4">Panel de Procesos</h2>
+        <p class="text-gray-600 text-lg">Seleccione una opción para continuar</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+        <!-- Ingreso de inventario -->
+        <div
+            class="bg-white rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+            <div class="p-8 text-center">
+                <div class="mb-6">
+                    <i class="fas fa-box-open text-6xl text-blue-600"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">Ingreso de inventario</h3>
+                <button [routerLink]="['/ingreso-inventario']"
+                    class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200 font-semibold">
+                    Registrar Ingreso
+                </button>
+            </div>
+        </div>
+
+        <!-- Ver inventario -->
+        <div
+            class="bg-white rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+            <div class="p-8 text-center">
+                <div class="mb-6">
+                    <i class="fas fa-warehouse text-6xl text-indigo-600"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">Ver inventario</h3>
+                <button [routerLink]="['/lista-inventario']"
+                    class="w-full bg-indigo-600 text-white py-3 px-6 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-200 font-semibold">
+                    Ver Stock
+                </button>
+            </div>
+        </div>
+
+        <!-- Registro de venta -->
+        <div
+            class="bg-white rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+            <div class="p-8 text-center">
+                <div class="mb-6">
+                    <i class="fas fa-shopping-cart text-6xl text-green-600"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">Registro de venta</h3>
+                <button [routerLink]="['/registro-venta']"
+                    class="w-full bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors duration-200 font-semibold">
+                    Registrar Venta
+                </button>
+            </div>
+        </div>
+
+        <!-- Registrar salida -->
+        <div
+            class="bg-white rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+            <div class="p-8 text-center">
+                <div class="mb-6">
+                    <i class="fas fa-truck text-6xl text-orange-600"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">Registrar salida</h3>
+                <button [routerLink]="['/registrar-salida']"
+                    class="w-full bg-orange-600 text-white py-3 px-6 rounded-lg hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-colors duration-200 font-semibold">
+                    Registrar Salida
+                </button>
+            </div>
+        </div>
+
+        <!-- Registrar pago -->
+        <div
+            class="bg-white rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+            <div class="p-8 text-center">
+                <div class="mb-6">
+                    <i class="fas fa-money-bill-wave text-6xl text-purple-600"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">Registrar pago</h3>
+                <button [routerLink]="['/registrar-pago']"
+                    class="w-full bg-purple-600 text-white py-3 px-6 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors duration-200 font-semibold">
+                    Registrar Pago
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,319 @@
+<div class="container mx-auto px-4 py-8 max-w-6xl">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div class="p-6">
+            <div class="mb-6 pb-2 border-b border-gray-200">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-2 text-center">Registro de Venta</h2>
+            </div>
+
+            <!-- Loading spinner -->
+            <div *ngIf="loading" class="flex justify-center items-center py-8">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            </div>
+
+            <form [formGroup]="ventaForm" (ngSubmit)="onSubmit()" class="space-y-6" *ngIf="!loading">
+                <!-- Primera fila: Fechas y número de envío -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Fecha de venta -->
+                    <div>
+                        <label for="fecha_venta" class="block text-sm font-semibold text-gray-700 mb-2">
+                            Fecha de venta <span class="text-red-500">*</span>
+                        </label>
+                        <input type="date" id="fecha_venta" formControlName="fecha_venta" [class]="'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ' + 
+                                    (esInvalido('fecha_venta') ? 'border-red-500' : 'border-gray-300')">
+                        <div *ngIf="esInvalido('fecha_venta')" class="text-red-500 text-sm mt-1">
+                            {{ obtenerMensajeError('fecha_venta') }}
+                        </div>
+                    </div>
+
+                    <!-- Fecha de salida de bodega -->
+                    <div>
+                        <label for="fecha_salida_bodega" class="block text-sm font-semibold text-gray-700 mb-2">
+                            Fecha de salida de bodega
+                        </label>
+                        <input type="date" id="fecha_salida_bodega" formControlName="fecha_salida_bodega"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+
+                    <!-- Número de envío -->
+                    <div>
+                        <label for="numero_envio" class="block text-sm font-semibold text-gray-700 mb-2">
+                            Número de envío <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="numero_envio" formControlName="numero_envio"
+                            placeholder="Ingrese el número de envío" [class]="'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ' + 
+                                    (esInvalido('numero_envio') ? 'border-red-500' : 'border-gray-300')">
+                        <div *ngIf="esInvalido('numero_envio')" class="text-red-500 text-sm mt-1">
+                            {{ obtenerMensajeError('numero_envio') }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Segunda fila: Cliente y NIT -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Cliente -->
+                    <div>
+                        <label for="cliente_id" class="block text-sm font-semibold text-gray-700 mb-2">
+                            Cliente <span class="text-red-500">*</span>
+                        </label>
+                        <select id="cliente_id" formControlName="cliente_id" [class]="'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ' + 
+                                    (esInvalido('cliente_id') ? 'border-red-500' : 'border-gray-300')">
+                            <option value="">Seleccione un cliente</option>
+                            <option *ngFor="let cliente of clientes" [value]="cliente.id">
+                                {{ cliente.nombre_contacto + ' - ' + cliente.nombre_negocio }}
+                            </option>
+                        </select>
+                        <div *ngIf="esInvalido('cliente_id')" class="text-red-500 text-sm mt-1">
+                            {{ obtenerMensajeError('cliente_id') }}
+                        </div>
+                    </div>
+
+                    <!-- NIT Cliente -->
+                    <div>
+                        <label for="nit_cliente" class="block text-sm font-semibold text-gray-700 mb-2">
+                            NIT Cliente
+                        </label>
+                        <input type="text" id="nit_cliente" formControlName="nit_cliente" readonly
+                            placeholder="Se completa automáticamente"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                </div>
+
+                <!-- Tercera fila: Tipo de pago, días de crédito y vendedor -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Tipo de pago -->
+                    <div>
+                        <label for="tipo_pago" class="block text-sm font-semibold text-gray-700 mb-2">
+                            Tipo de pago <span class="text-red-500">*</span>
+                        </label>
+                        <select 
+                            id="tipo_pago" 
+                            formControlName="tipo_pago" 
+                            [class]="'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ' + (esInvalido('tipo_pago') ? 'border-red-500' : 'border-gray-300')"
+                            [disabled]="!clienteSeleccionado || tiposPagoDisponibles.length === 0">
+                            <option value="">
+                                {{ !clienteSeleccionado ? 'Seleccione primero un cliente' : 
+                                   tiposPagoDisponibles.length === 0 ? 'Cliente sin tipos de pago configurados' : 
+                                   'Seleccione tipo de pago' }}
+                            </option>
+                            <option 
+                                *ngFor="let tipoPago of tiposPagoDisponibles" 
+                                [value]="tipoPago">
+                                {{ tipoPago }}
+                            </option>
+                        </select>
+                        <div *ngIf="esInvalido('tipo_pago')" class="text-red-500 text-sm mt-1">
+                            {{ obtenerMensajeError('tipo_pago') }}
+                        </div>
+                    </div>
+
+                    <!-- Días de crédito -->
+                    <div>
+                        <label for="dias_credito" class="block text-sm font-semibold text-gray-700 mb-2">
+                            Días de crédito <span class="text-red-500">*</span>
+                        </label>
+                        <input type="number" id="dias_credito" formControlName="dias_credito" min="0"
+                            placeholder="Días de crédito" [class]="'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ' + 
+                                    (esInvalido('dias_credito') ? 'border-red-500' : 'border-gray-300')">
+                        <div *ngIf="esInvalido('dias_credito')" class="text-red-500 text-sm mt-1">
+                            {{ obtenerMensajeError('dias_credito') }}
+                        </div>
+                    </div>
+
+                    <!-- Vendedor -->
+                    <div>
+                        <label for="vendedor_id" class="block text-sm font-semibold text-gray-700 mb-2">
+                            Vendedor <span class="text-red-500">*</span>
+                        </label>
+                        <select id="vendedor_id" formControlName="vendedor_id" [class]="'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ' + 
+                                    (esInvalido('vendedor_id') ? 'border-red-500' : 'border-gray-300')">
+                            <option value="">Seleccione un vendedor</option>
+                            <option *ngFor="let vendedor of vendedores" [value]="vendedor.id">
+                                {{ vendedor.nombres + ' ' + vendedor.apellidos }}
+                            </option>
+                        </select>
+                        <div *ngIf="esInvalido('vendedor_id')" class="text-red-500 text-sm mt-1">
+                            {{ obtenerMensajeError('vendedor_id') }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cuarta fila: Datos de facturación DTE -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Número de factura DTE -->
+                    <div>
+                        <label for="numero_factura_dte" class="block text-sm font-semibold text-gray-700 mb-2">
+                            Número de factura DTE
+                        </label>
+                        <input type="text" id="numero_factura_dte" formControlName="numero_factura_dte"
+                            placeholder="Número de factura DTE"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+
+                    <!-- Nombre de factura -->
+                    <div>
+                        <label for="nombre_factura" class="block text-sm font-semibold text-gray-700 mb-2">
+                            Nombre de factura
+                        </label>
+                        <input type="text" id="nombre_factura" formControlName="nombre_factura"
+                            placeholder="Nombre para la factura"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+
+                    <!-- NIT Factura -->
+                    <div>
+                        <label for="nit_factura" class="block text-sm font-semibold text-gray-700 mb-2">
+                            NIT Factura
+                        </label>
+                        <input type="text" id="nit_factura" formControlName="nit_factura"
+                            placeholder="NIT para facturación"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                </div>
+
+                <!-- Quinta sección: Productos vendidos -->
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-700">Productos Vendidos</h3>
+                        <button type="button" (click)="agregarProducto()"
+                            class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors">
+                            + Agregar Producto
+                        </button>
+                    </div>
+
+                    <div formArrayName="productos">
+                        <div *ngFor="let producto of productosFormArray.controls; let i = index" [formGroupName]="i"
+                            class="bg-white p-4 rounded-lg border border-gray-200 mb-4">
+
+                            <div class="flex justify-between items-center mb-4">
+                                <h4 class="text-md font-semibold text-gray-600">Producto {{ i + 1 }}</h4>
+                                <button type="button" (click)="eliminarProducto(i)"
+                                    class="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors text-sm">
+                                    Eliminar
+                                </button>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                                <!-- Producto -->
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        Producto <span class="text-red-500">*</span>
+                                    </label>
+                                    <select formControlName="producto_id"
+                                        [class]="'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm ' + 
+                                                (esInvalidoProducto(i, 'producto_id') ? 'border-red-500' : 'border-gray-300')">
+                                        <option value="">Seleccione un producto</option>
+                                        <option *ngFor="let prod of productos" [value]="prod.id">
+                                            {{ prod.codigo_producto }} - {{ prod.nombre_producto }}
+                                        </option>
+                                    </select>
+                                    <div *ngIf="esInvalidoProducto(i, 'producto_id')" class="text-red-500 text-xs mt-1">
+                                        Producto requerido
+                                    </div>
+                                </div>
+
+                                <!-- Cantidad -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        Cantidad <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="number" formControlName="cantidad_fardos" min="1" placeholder="0"
+                                        [class]="'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm ' + 
+                                                (esInvalidoProducto(i, 'cantidad_fardos') ? 'border-red-500' : 'border-gray-300')">
+                                    <div *ngIf="esInvalidoProducto(i, 'cantidad_fardos')"
+                                        class="text-red-500 text-xs mt-1">
+                                        Cantidad requerida
+                                    </div>
+                                </div>
+
+                                <!-- Unidades totales -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        Total Unidades
+                                    </label>
+                                    <input type="number" formControlName="unidades_totales" readonly
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-sm">
+                                </div>
+
+                                <!-- Precio por fardo/paquete -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        Precio por fardo/paquete <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="number" formControlName="precio_por_fardo_paquete" min="0.01"
+                                        step="0.01" placeholder="0.00"
+                                        [class]="'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm ' + 
+                                                (esInvalidoProducto(i, 'precio_por_fardo_paquete') ? 'border-red-500' : 'border-gray-300')">
+                                    <div *ngIf="esInvalidoProducto(i, 'precio_por_fardo_paquete')"
+                                        class="text-red-500 text-xs mt-1">
+                                        Precio requerido
+                                    </div>
+                                </div>
+
+                                <!-- Subtotal -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        Subtotal
+                                    </label>
+                                    <input type="number" formControlName="subtotal" readonly
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-sm font-semibold">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Total de la venta -->
+                    <div class="mt-4 pt-4">
+                        <div class="flex justify-end">
+                            <div class="bg-gray-100 p-4 rounded-lg shadow-sm">
+                                <div class="text-right">
+                                    <span class="text-lg font-semibold text-gray-700">Total de la venta: </span>
+                                    <span class="text-xl font-bold text-blue-600">Q {{ totalVenta | number:'1.2-2'
+                                        }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mensaje de IVA aplicado -->
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4">
+                    <div class="flex items-center">
+                        <svg class="w-4 h-4 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                        <p class="text-sm text-blue-800 font-medium">
+                            <span class="font-semibold">Nota:</span> Al total se le ha aplicado el IVA del 12%
+                            correspondiente.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Observaciones -->
+                <div>
+                    <label for="observaciones" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Observaciones
+                    </label>
+                    <textarea id="observaciones" formControlName="observaciones" rows="3"
+                        placeholder="Observaciones adicionales (opcional)"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"></textarea>
+                </div>
+
+                <!-- Botones -->
+                <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                    <button type="button" (click)="cancelar()"
+                        class="px-6 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="submit" [disabled]="loading"
+                        class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        <span *ngIf="loading"
+                            class="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
+                        {{ loading ? 'Registrando...' : 'Registrar Venta' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

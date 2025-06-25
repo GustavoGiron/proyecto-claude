@@ -1,3 +1,5 @@
+# backend/app/__init__.py
+
 import os
 from flask import Flask, jsonify
 from flasgger import Swagger
@@ -7,6 +9,7 @@ from flask_cors import CORS
 
 from .config import Config
 from .utils.validators import ValidationError
+from .utils.emailalert import enviar_alerta_stock_bajo
 
 # Instancias singleton
 db = SQLAlchemy()
@@ -17,7 +20,7 @@ def create_app():
     app.config.from_object(Config)
 
     # Configurar CORS
-    CORS(app, origins=['http://localhost:3000', 'http://127.0.0.1:3000'], 
+    CORS(app, origins=['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:4200', 'http://127.0.0.1:4200'], 
          methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
          allow_headers=['Content-Type', 'Authorization'])
 
@@ -124,7 +127,7 @@ def create_app():
                     "numero_envio":         {"type": "string"},
                     "tipo_pago":            {"type": "string", "enum": ["Contado", "Credito"]},
                     "dias_credito":         {"type": "integer"},
-                    "fecha_vencimiento":    {"type": "string", "format": "date"},
+                    #"fecha_vencimiento":    {"type": "string", "format": "date"},
                     "vendedor_id":          {"type": "integer"},
                     "numero_factura_dte":   {"type": "string"},
                     "nombre_factura":       {"type": "string"},
@@ -225,15 +228,19 @@ def create_app():
         productos_bp,
         inventario_bp,
         vendedores_bp,
-        ventas_bp
+        ventas_bp,
+        ingresos_bp
     )
+    from app.api.auth_api import auth_bp
 
+    app.register_blueprint(auth_bp,          url_prefix='/api/auth')
     app.register_blueprint(clientes_bp,      url_prefix='/api/clientes')
     app.register_blueprint(departamentos_bp, url_prefix='/api/departamentos')
     app.register_blueprint(productos_bp,     url_prefix='/api/productos')
     app.register_blueprint(inventario_bp,    url_prefix='/api/inventario')
     app.register_blueprint(vendedores_bp,    url_prefix='/api/vendedores')
     app.register_blueprint(ventas_bp,        url_prefix='/api/ventas')
+    app.register_blueprint(ingresos_bp,      url_prefix='/api/ingresos')
 
     return app
 

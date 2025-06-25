@@ -6,7 +6,7 @@ USE imporcomgua_db;
 CREATE TABLE Departamentos (
     Id INT AUTO_INCREMENT PRIMARY KEY,
     Codigo VARCHAR(2) NOT NULL UNIQUE,
-    Nombre VARCHAR(50) NOT NULL,
+    Nombre VARCHAR(50) NOT NULL
 );
 
 -- Tabla Municipios
@@ -28,8 +28,7 @@ CREATE TABLE Vendedores (
     PorcentajeComision DECIMAL(5,2) NOT NULL,
     FechaModificacion DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     UsuarioCreacion VARCHAR(50),
-    UsuarioModificacion VARCHAR(50),
-    
+    UsuarioModificacion VARCHAR(50)
 );
 
 -- Tabla Clientes
@@ -50,6 +49,8 @@ CREATE TABLE Clientes (
     FechaModificacion DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     UsuarioCreacion VARCHAR(50),
     UsuarioModificacion VARCHAR(50),
+    FechaCreacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    Estado BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (DepartamentoId) REFERENCES Departamentos(Id),
     FOREIGN KEY (MunicipioId) REFERENCES Municipios(Id)
 );
@@ -65,6 +66,7 @@ CREATE TABLE Productos (
     FechaModificacion DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     UsuarioCreacion VARCHAR(50),
     UsuarioModificacion VARCHAR(50),
+    estadoProducto VARCHAR(20) NOT NULL DEFAULT 'Activo' CHECK (estadoProducto IN ('Activo', 'Inactivo'))
 );
 
 -- Tabla IngresosMercancia
@@ -77,7 +79,7 @@ CREATE TABLE IngresosMercancia (
     NumeroDucaRectificada VARCHAR(50),
     FechaDucaRectificada DATE,
     Observaciones TEXT,
-    UsuarioCreacion VARCHAR(50),
+    UsuarioCreacion VARCHAR(50)
 );
 
 -- Tabla DetalleIngresosMercancia
@@ -185,8 +187,7 @@ CREATE TABLE Comisiones (
     FOREIGN KEY (VendedorId) REFERENCES Vendedores(Id)
 );
 
-
--- Tabla logs
+-- Tabla Logs
 CREATE TABLE Logs (
     Id INT AUTO_INCREMENT PRIMARY KEY,
     Fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -194,4 +195,21 @@ CREATE TABLE Logs (
     codMensaje INT NOT NULL,
     Servicio VARCHAR(100) NOT NULL,
     Descripcion TEXT
+);
+
+-- Tabla Pagos
+CREATE TABLE Pagos (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    VentaId INT NOT NULL,
+    NumeroReciboCaja VARCHAR(50) NOT NULL,
+    FechaPago DATE NOT NULL,
+    Banco VARCHAR(50) NOT NULL CHECK (Banco IN ('Industrial', 'Banrural', 'G&T', 'BAM')),
+    NumeroCuenta VARCHAR(30) NOT NULL,
+    NumeroTransferencia VARCHAR(50),
+    MontoAbono DECIMAL(12,2) NOT NULL,
+    SaldoAnterior DECIMAL(12,2) NOT NULL,
+    SaldoActual DECIMAL(12,2) NOT NULL,
+    FechaCreacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UsuarioCreacion VARCHAR(50),
+    FOREIGN KEY (VentaId) REFERENCES Ventas(Id)
 );

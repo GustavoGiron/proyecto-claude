@@ -2,6 +2,14 @@
 
 # Daily Standups - Fase 2
 
+## Grabaciones de Daily Standups
+
+Todas las grabaciones de los daily standups están disponibles en el siguiente enlace:
+
+**[Ver Grabaciones](https://drive.google.com/drive/folders/1b91diDGSCBJOMDy6OYVzBlRN9n-l_FB9?usp=sharing)**
+
+---
+
 ## Daily 1 - 17/06/2025
 
 ### Integrante 1 - Kevin Estuardo Secaida Molina
@@ -29,7 +37,6 @@
 * **¿Qué hice ayer?**: Me enfoqué en el análisis y diseño de los casos de uso (DCU) del sistema. Elaboré y modifiqué los diagramas correspondientes, incluyendo los DCU de alto nivel, primera descomposición y los de soporte. Validé su coherencia frente al enunciado y requerimientos funcionales, asegurando que los flujos representados se alinearan con los procesos reales de IMPORCOMGUA. Además, redacté las descripciones textuales completas de los casos de uso principales y de soporte, siguiendo la estructura formal requerida para la documentación de la fase 1.
 * **¿Qué haré hoy?**: Ajustaré los diagramas si se reciben observaciones, y apoyaré en la integración de estos elementos al repositorio del proyecto. También colaboraré en validar la consistencia entre diagramas y futuras implementaciones técnicas.
 * **¿Tengo algún impedimento?**: No, todo en orden.
-
 
 ### Integrante 6 - Ediwn Sandoval Lopez
 - **¿Qué hice ayer?**: Ayer estuve revisando el script de la base de datos, generando migrations para la creacion de la base de datos por comando.
@@ -74,7 +81,6 @@ Se está trabajando en sincronizar esta lógica para evitar conflictos.
   * Verificar y probar los endpoints REST en `productos_api.py`.
 * **¿Tengo algún impedimento?**: Sí. Necesito confirmar con el equipo de frontend el formato exacto de la respuesta de los endpoints de productos (estructura y nombres de campos) para garantizar una integración correcta.
 
-
 ### Integrante 6 - Ediwn Sandoval Lopez
 - **¿Qué hice ayer?**: Ayer estuve terminando la migrations de la base de datos.
 - **¿Qué haré hoy?**: Hoy voy a estar viendo el script migrate, para ejecutar el migrate y rollback
@@ -93,15 +99,15 @@ Se está trabajando en sincronizar esta lógica para evitar conflictos.
 - **¿Qué haré hoy?**: Hoy realicé la creación del dashboard principal y desarrollé los módulos de mantenimiento para el sistema.
 - **¿Tengo algún impedimento?**: No tengo ningún impedimento por el momento.
 
-### Integrante 3 - [Nombre]
-- **¿Qué hice ayer?**: [Actividades del día anterior]
-- **¿Qué haré hoy?**: [Actividades planificadas para hoy]
-- **¿Tengo algún impedimento?**: [Sí/No - Descripción si aplica]
+### Integrante 3 - Gustavo Alejandro Giron Arriola
+- **¿Qué hice ayer?**: Implemente los servicios para la gestion del venndedor en la api en python
+- **¿Qué haré hoy?**: Trabajare el apartado para la gestion de las ventas salidas de bodega y pagos en la api en python 
+- **¿Tengo algún impedimento?**: no hay ninguno
 
-### Integrante 4 - [Nombre]
-- **¿Qué hice ayer?**: [Actividades del día anterior]
-- **¿Qué haré hoy?**: [Actividades planificadas para hoy]
-- **¿Tengo algún impedimento?**: [Sí/No - Descripción si aplica]
+### Integrante 4 - Carlos Raul Rangel Robelo
+- **¿Qué hice ayer?**: Ayer asesoré al equipo de frontend sobre cómo guiarse con la documentación OpenAPI para el módulo de clientes, revisamos juntos el Swagger generado y expliqué la lógica de negocio detrás de cada endpoint de cliente. También hice traslado de conocimientos sobre la estructura de controladores y servicios de clientes, y validé la integración de varios endpoints (GET/POST/PUT) con ejemplos reales desde Postman.
+- **¿Qué haré hoy?**: Hoy escribiré y ejecutaré las pruebas unitarias para los endpoints de clientes, optimizaré el manejo de errores y los logs en el servicio de clientes, y actualizaré la documentación con ejemplos de payloads y respuestas esperadas.
+- **¿Tengo algún impedimento?**: No.
 
 ### Integrante 5 – Oscar Eduardo Morales Girón
 
@@ -109,36 +115,41 @@ Se está trabajando en sincronizar esta lógica para evitar conflictos.
 * **¿Qué haré hoy?**: Validaré que el core de negocio concuerde con los casos de uso existentes y actualizaré los stakeholders en los diagramas de fase 1. Además, revisaré que la documentación describa correctamente estos procesos.
 * **¿Tengo algún impedimento?**: Sí. Necesito confirmar con el equipo de frontend el formato exacto de la respuesta de los endpoints de Productos (estructura y nombres de campos) para garantizar una integración correcta.
 
-### Integrante 6 - [Nombre]
-- **¿Qué hice ayer?**: [Actividades del día anterior]
-- **¿Qué haré hoy?**: [Actividades planificadas para hoy]
-- **¿Tengo algún impedimento?**: [Sí/No - Descripción si aplica]
+### Integrante 6 - Ediwn Sandoval Lopez
+- **¿Qué hice ayer?**: Ayer estuve viendo los scrips para los migrate de cada tabla y el script para ejecutar ejecutar el migrate y rollback.
+- **¿Qué haré hoy?**: Hoy voy a estar viendo la api de ingreso de mercancia.
+- **¿Tengo algún impedimento?**: No.
 
 ## Daily 4 - 20/06/2025
 
-### Integrante 1 - [Nombre]
-- **¿Qué hice ayer?**: [Actividades del día anterior]
-- **¿Qué haré hoy?**: [Actividades planificadas para hoy]
-- **¿Tengo algún impedimento?**: [Sí/No - Descripción si aplica]
+### Integrante 1 - Kevin Estuardo Secaida Molina
+- **¿Qué hice ayer?**: Terminé la implementación del módulo de vendedores, creando el formulario y asegurando que se integre correctamente con el backend. También revisé los endpoints necesarios para las operaciones CRUD de vendedores.
+- **¿Qué haré hoy?**: Termine de revisar el módulo de ventas y corregí algunos errores en la carga dinámica de productos según el vendedor seleccionado.
+- **¿Tengo algún impedimento?**: Problemas con la integración del formulario de ventas con el backend, por lo que esperaba en el json.
 
-### Integrante 2 - [Nombre]
-- **¿Qué hice ayer?**: [Actividades del día anterior]
-- **¿Qué haré hoy?**: [Actividades planificadas para hoy]
-- **¿Tengo algún impedimento?**: [Sí/No - Descripción si aplica]
+### Integrante 2 - Pedro Luis Pu Tavico
+- **¿Qué hice ayer?**: Ayer realicé la creación del dashboard principal y desarrollé los módulos de mantenimiento para el sistema.
+- **¿Qué haré hoy?**: Hoy voy a trabajar en el componente de ventas, específicamente en la acción de registrar una venta. Tambien realizare el componente de inventario.
+- **¿Tengo algún impedimento?**: No tengo ningún impedimento por el momento.
 
-### Integrante 3 - [Nombre]
-- **¿Qué hice ayer?**: [Actividades del día anterior]
-- **¿Qué haré hoy?**: [Actividades planificadas para hoy]
-- **¿Tengo algún impedimento?**: [Sí/No - Descripción si aplica]
+### Integrante 3 - Gustavo Alejandro Giron Arriola
+- **¿Qué hice ayer?**: implemente los servicios para la gestion de las ventas salidas de bodega y pagos en la api en python
+- **¿Qué haré hoy?**: hare la correccion delm ingreso de ventas en la api ya que hubo algunos problemas con la relacion con la base de datos
+- **¿Tengo algún impedimento?**: no hay ninguno
 
-### Integrante 4 - [Nombre]
-- **¿Qué hice ayer?**: [Actividades del día anterior]
-- **¿Qué haré hoy?**: [Actividades planificadas para hoy]
-- **¿Tengo algún impedimento?**: [Sí/No - Descripción si aplica]
+### Integrante 4 - Carlos Raul Rangel Robelo
+- **¿Qué hice ayer?**: Ajusté los DTOs de clientes según el feedback recibido.
+- **¿Qué haré hoy?**: Estaré atento a las dudas del frontend y listo para implementar cambios o resolver cualquier error en los endpoints de clientes.
+- **¿Tengo algún impedimento?**: No
 
-### Integrante 5 - [Nombre]
-- **¿Qué hice ayer?**: [Actividades del día anterior]
-- **¿Qué haré hoy?**: [Actividades planificadas para hoy]
-- **¿Tengo algún impedimento?**: [Sí/No - Descripción si aplica]
+### Integrante 5 – Oscar Eduardo Morales Girón
+* **¿Qué hice ayer?**: Revisé el core de negocio y actualicé los stakeholders en los diagramas de fase 1 para alinearlos con los casos de uso expandidos. Además, repasé la documentación sobre capas, arquitectura y despliegue para entender mejor el contexto para la realización de diagramas.
+* **¿Qué haré hoy?**: Elaborar los diagramas de despliegue, de distribución y de capas.
+* **¿Tengo algún impedimento?**: No.
+
+### Integrante 6 - Ediwn Sandoval Lopez
+- **¿Qué hice ayer?**: Ayer estuve viendo la api de ingreso de mercancias, y parte de la api de invetario.
+- **¿Qué haré hoy?**: Hoy voy a estar viendo el frontend para ingresar mercancia y algunas vistas para listar el inventario.
+- **¿Tengo algún impedimento?**: No.
 
 [← Regresar al README](../../../README.md)

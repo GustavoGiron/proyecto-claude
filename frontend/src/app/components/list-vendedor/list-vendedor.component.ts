@@ -58,7 +58,6 @@ export class ListVendedorComponent implements OnInit {
     if (confirm('¿Estás seguro de que deseas eliminar este vendedor?')) {
       this.vendedorService.eliminarVendedor(codigo).subscribe({
         next: () => {
-          console.log(`Vendedor ${codigo} eliminado correctamente.`);
           this.cargarVendedores();
         },
         error: (err) => {

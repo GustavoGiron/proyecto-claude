@@ -13,7 +13,7 @@ class Venta(db.Model):
     numero_envio = db.Column('NumeroEnvio', db.String(50), nullable=False, unique=True)
     tipo_pago = db.Column('TipoPago', db.String(10), nullable=False)
     dias_credito = db.Column('DiasCredito', db.Integer, nullable=False, default=0)
-    fecha_vencimiento = db.Column('FechaVencimiento', db.Date)
+    #fecha_vencimiento = db.Column('FechaVencimiento', db.Date, nullable=True)
     vendedor_id = db.Column('VendedorId', db.Integer, db.ForeignKey('Vendedores.Id'), nullable=False)
     numero_factura_dte = db.Column('NumeroFacturaDTE', db.String(50))
     nombre_factura = db.Column('NombreFactura', db.String(200))
@@ -51,7 +51,7 @@ class Venta(db.Model):
             'numero_envio': self.numero_envio,
             'tipo_pago': self.tipo_pago,
             'dias_credito': self.dias_credito,
-            'fecha_vencimiento': self.fecha_vencimiento.isoformat() if self.fecha_vencimiento else None,
+            #'fecha_vencimiento': self.fecha_vencimiento.isoformat() if self.fecha_vencimiento else None,
             'vendedor_id': self.vendedor_id,
             'numero_factura_dte': self.numero_factura_dte,
             'nombre_factura': self.nombre_factura,

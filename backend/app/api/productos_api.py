@@ -289,3 +289,22 @@ def delete_producto(id):
         return jsonify({"error": error}), 400
     
     return jsonify({"message": "Producto eliminado exitosamente"}), 200
+
+@productos_bp.route('/activos', methods=['GET'])
+@handle_exceptions(servicio='Productos', cod_mensaje=2006)
+def get_productos_activos():
+    """
+    Obtener productos activos
+    ---
+    tags:
+      - Productos
+    responses:
+      200:
+        description: Lista de productos activos
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/Producto'
+    """
+    productos = ProductoService.get_all_productos_activos()
+    return jsonify(productos), 200

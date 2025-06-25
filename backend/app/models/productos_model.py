@@ -14,6 +14,7 @@ class Producto(db.Model):
     fecha_modificacion = db.Column('FechaModificacion', db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     usuario_creacion = db.Column('UsuarioCreacion', db.String(50))
     usuario_modificacion = db.Column('UsuarioModificacion', db.String(50))
+    estado_producto = db.Column('estadoProducto', db.String(20), default='Activo')
     
     __table_args__ = (
         CheckConstraint(unidad_medida.in_(['Unidad', 'Fardo', 'Paquete']), name='check_unidad_medida'),
@@ -29,5 +30,6 @@ class Producto(db.Model):
             'stock_minimo': self.stock_minimo,
             'fecha_modificacion': self.fecha_modificacion.isoformat() if self.fecha_modificacion else None,
             'usuario_creacion': self.usuario_creacion,
-            'usuario_modificacion': self.usuario_modificacion
+            'usuario_modificacion': self.usuario_modificacion,
+            'estado_producto': self.estado_producto
         }

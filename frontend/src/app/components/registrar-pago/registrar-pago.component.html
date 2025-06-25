@@ -1,0 +1,338 @@
+<!-- Formulario de Registrar Pago -->
+<div class="bg-gray-50">
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div class="p-6">
+                <div class="mb-6 pb-2 border-b border-gray-200">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-2 text-center">Registrar Pago</h2>
+                </div>
+
+                <!-- Búsqueda de ventas -->
+                <div id="busqueda-section" class="mb-8">
+                    <form [formGroup]="busquedaForm" (ngSubmit)="buscarVentas()"
+                        class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <!-- Filtro por número de envío -->
+                        <div>
+                            <label for="buscar-envio" class="block text-sm font-semibold text-gray-700 mb-2">
+                                Número de envío
+                            </label>
+                            <input type="text" id="buscar-envio" formControlName="numeroEnvio"
+                                placeholder="Buscar por número de envío"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+
+                        <!-- Filtro por nombre de cliente -->
+                        <div>
+                            <label for="buscar-cliente" class="block text-sm font-semibold text-gray-700 mb-2">
+                                Nombre de cliente
+                            </label>
+                            <input type="text" id="buscar-cliente" formControlName="nombreCliente"
+                                placeholder="Buscar por nombre de cliente"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+
+                        <!-- Botones de búsqueda -->
+                        <div class="flex items-end space-x-2">
+                            <button type="submit" [disabled]="loading"
+                                class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors disabled:opacity-50">
+                                <span *ngIf="!loading">Buscar Ventas</span>
+                                <span *ngIf="loading">Buscando...</span>
+                            </button>
+                            <button type="button" (click)="limpiarBusqueda()"
+                                class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors">
+                                Limpiar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Resultados de búsqueda -->
+                <div *ngIf="mostrarResultados" id="resultados-section" class="mb-8">
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-lg font-semibold text-gray-700 mb-4">Resultados de la Búsqueda</h3>
+
+                        <div *ngIf="ventas.length > 0" id="resultados-container" class="space-y-3">
+                            <div *ngFor="let venta of ventas"
+                                class="bg-white p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
+                                <div class="flex justify-between items-start">
+                                    <div class="flex-1">
+                                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                            <div>
+                                                <span class="text-sm font-semibold text-gray-600">No. Envio:</span>
+                                                <p class="font-medium text-blue-600">{{ venta.numero_envio }}</p>
+                                            </div>
+                                            <div>
+                                                <span class="text-sm font-semibold text-gray-600">Cliente:</span>
+                                                <p class="font-medium">{{ venta.cliente_id }}</p>
+                                            </div>
+                                            <div>
+                                                <span class="text-sm font-semibold text-gray-600">Fecha de venta:</span>
+                                                <p class="font-medium">{{ venta.fecha_venta }}</p>
+                                            </div>
+                                            <div>
+                                                <span class="text-sm font-semibold text-gray-600">Estado de cobro:</span>
+                                                <div class="mt-1">
+                                                    <p [ngClass]="getEstadoCobroClass(venta.estado_cobro || '')">{{ venta.estado_cobro || ''}}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button (click)="seleccionarVenta(venta)"
+                                        class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors ml-4">
+                                        Seleccionar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div *ngIf="ventas.length === 0" class="text-center py-8 text-gray-500">
+                            <p>No se encontraron ventas que coincidan con los criterios de búsqueda.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información de la venta seleccionada -->
+                <div *ngIf="mostrarVentaSeleccionada && ventaSeleccionada" id="venta-seleccionada-section" class="mb-8">
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-lg font-semibold text-gray-700 mb-4">Información de la Venta</h3>
+
+                        <!-- Información general de la venta -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                            <div class="bg-white p-3 rounded border">
+                                <label class="block text-sm font-semibold text-gray-600">Número de envío:</label>
+                                <span class="text-gray-900 font-medium">{{ ventaSeleccionada.numero_envio }}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded border">
+                                <label class="block text-sm font-semibold text-gray-600">Cliente:</label>
+                                <span class="text-gray-900 font-medium">{{ ventaSeleccionada.cliente_id }}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded border">
+                                <label class="block text-sm font-semibold text-gray-600">Fecha de venta:</label>
+                                <span class="text-gray-900 font-medium">{{ ventaSeleccionada.fecha_venta }}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded border">
+                                <label class="block text-sm font-semibold text-gray-600">Vendedor:</label>
+                                <span class="text-gray-900 font-medium">{{ ventaSeleccionada.nombre_vendedor }}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded border">
+                                <label class="block text-sm font-semibold text-gray-600">Tipo de pago:</label>
+                                <span class="text-gray-900 font-medium">{{ ventaSeleccionada.tipo_pago }}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded border">
+                                <label class="block text-sm font-semibold text-gray-600">Total:</label>
+                                <span class="text-gray-900 font-medium">Q {{ ventaSeleccionada.total_venta |
+                                    number:'1.2-2' }}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded border">
+                                <label class="block text-sm font-semibold text-gray-600">Estado de venta:</label>
+                                <span [ngClass]="getEstadoVentaClass(ventaSeleccionada.estado_venta || '')">{{ ventaSeleccionada.estado_venta || ''}}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded border">
+                                <label class="block text-sm font-semibold text-gray-600">Estado de cobro:</label>
+                                <span [ngClass]="getEstadoCobroClass(ventaSeleccionada.estado_cobro || '')">{{ ventaSeleccionada.estado_cobro || ''}}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded border">
+                                <label class="block text-sm font-semibold text-gray-600">Estado de entrega:</label>
+                                <span [ngClass]="getEstadoEntregaClass(ventaSeleccionada.estado_entrega || '')">{{ ventaSeleccionada.estado_entrega || ''}}</span>
+                            </div>
+                        </div>
+
+                        <!-- Historial de pagos -->
+                        <div class="bg-white p-4 rounded border mb-4">
+                            <h4 class="font-semibold text-gray-700 mb-3">Historial de Pagos:</h4>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="text-left p-2 font-semibold text-gray-600">Fecha</th>
+                                            <th class="text-left p-2 font-semibold text-gray-600">Recibo</th>
+                                            <th class="text-left p-2 font-semibold text-gray-600">Banco</th>
+                                            <th class="text-left p-2 font-semibold text-gray-600">No. Transferencia</th>
+                                            <th class="text-left p-2 font-semibold text-gray-600">Monto</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let pago of ventaSeleccionada.pagos" class="border-b">
+                                            <td class="p-2">{{ pago.fecha_pago }}</td>
+                                            <td class="p-2">{{ pago.numero_recibo_caja || '-' }}</td>
+                                            <td class="p-2">{{ pago.banco }}</td>
+                                            <td class="p-2">{{ pago.numero_transferencia }}</td>
+                                            <td class="p-2">Q {{ pago.monto_abono.toFixed(2) }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div *ngIf="ventaSeleccionada.detalles.length === 0" class="text-center py-4 text-gray-500">
+                                <p>No hay pagos registrados para esta venta.</p>
+                            </div>
+                        </div>
+
+                        <!-- Productos de la venta -->
+                        <div class="bg-white p-4 rounded border">
+                            <h4 class="font-semibold text-gray-700 mb-3">Productos:</h4>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="text-left p-2 font-semibold text-gray-600">Producto</th>
+                                            <th class="text-left p-2 font-semibold text-gray-600">Cantidad</th>
+                                            <th class="text-left p-2 font-semibold text-gray-600">Total Unidades</th>
+                                            <th class="text-left p-2 font-semibold text-gray-600">Precio por fardo/paquete</th>
+                                            <th class="text-left p-2 font-semibold text-gray-600">Subtotal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let producto of ventaSeleccionada.detalles" class="border-b">
+                                            <td class="p-2">{{ producto.nombre_producto }}</td>
+                                            <td class="p-2">{{ producto.cantidad }}</td>
+                                            <td class="p-2">{{ producto.cantidad_unidades }}</td>
+                                            <td class="p-2">Q {{ producto.precio_por_fardo_paquete | number:'1.2-2' }}</td>
+                                            <td class="p-2">Q {{ producto.subtotal_linea | number:'1.2-2' }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Registro de pago -->
+                <div *ngIf="mostrarRegistroPago && ventaSeleccionada" id="registro-pago-section">
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="text-lg font-semibold text-gray-700 mb-4">Registrar Nuevo Pago</h3>
+
+                        <form [formGroup]="pagoForm" (ngSubmit)="onSubmitPago()" class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Número de recibo -->
+                                <div>
+                                    <label for="numero-recibo" class="block text-sm font-semibold text-gray-700 mb-2">
+                                        Número de recibo de caja
+                                    </label>
+                                    <input type="text" id="numero-recibo" formControlName="numero_recibo_caja"
+                                        placeholder="Ingrese numero de recibo"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                </div>
+
+                                <!-- Fecha de pago -->
+                                <div>
+                                    <label for="fecha-pago" class="block text-sm font-semibold text-gray-700 mb-2">
+                                        Fecha de pago <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="date" id="fecha-pago" formControlName="fecha_pago"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    <div *ngIf="pagoForm.get('fecha_pago')?.invalid && pagoForm.get('fecha_pago')?.touched"
+                                        class="text-red-500 text-sm mt-1">
+                                        La fecha de pago es requerida.
+                                    </div>
+                                </div>
+
+                                <!-- Banco -->
+                                <div>
+                                    <label for="banco" class="block text-sm font-semibold text-gray-700 mb-2">
+                                        Banco <span class="text-red-500">*</span>
+                                    </label>
+                                    <select id="banco" formControlName="banco"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                        <option value="">Seleccionar banco</option>
+                                        <option value="Industrial">Industrial</option>
+                                        <option value="Banrural">Banrural</option>
+                                        <option value="G&T">G&T</option>
+                                        <option value="BAM">BAM</option>
+                                    </select>
+                                    <div *ngIf="pagoForm.get('banco')?.invalid && pagoForm.get('banco')?.touched"
+                                        class="text-red-500 text-sm mt-1">
+                                        El banco es requerido.
+                                    </div>
+                                </div>
+
+                                <!-- No. Cuenta -->
+                                <div>
+                                    <label for="numero-cuenta" class="block text-sm font-semibold text-gray-700 mb-2">
+                                        No. Cuenta <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" id="numero-cuenta" formControlName="numero_cuenta"
+                                        placeholder="Ingrese el numero de cuenta"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    <div *ngIf="pagoForm.get('numero_cuenta')?.invalid && pagoForm.get('numero_cuenta')?.touched"
+                                        class="text-red-500 text-sm mt-1">
+                                        El número de cuenta es requerido.
+                                    </div>
+                                </div>
+
+                                <!-- No. transferencia -->
+                                <div>
+                                    <label for="numero-transferencia"
+                                        class="block text-sm font-semibold text-gray-700 mb-2">
+                                        No. De transferencia o depósito <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" id="numero-transferencia" formControlName="numero_transferencia"
+                                        placeholder="Ingrese el numero de transferencia"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    <div *ngIf="pagoForm.get('numero_transferencia')?.invalid && pagoForm.get('numero_transferencia')?.touched"
+                                        class="text-red-500 text-sm mt-1">
+                                        El número de transferencia es requerido.
+                                    </div>
+                                </div>
+
+                                <!-- Monto de abono -->
+                                <div>
+                                    <label for="monto-abono" class="block text-sm font-semibold text-gray-700 mb-2">
+                                        Monto de abono <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="number" id="monto-abono" formControlName="monto_abono" step="0.01"
+                                        min="0.01"
+                                        placeholder="Ingrese el monto de abono"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    <div *ngIf="pagoForm.get('monto_abono')?.errors?.['required'] && pagoForm.get('monto_abono')?.touched"
+                                        class="text-red-500 text-sm mt-1">
+                                        El monto de abono es requerido.
+                                    </div>
+                                    <div *ngIf="pagoForm.get('monto_abono')?.errors?.['min'] && pagoForm.get('monto_abono')?.touched"
+                                        class="text-red-500 text-sm mt-1">
+                                        El monto debe ser mayor a 0.01.
+                                    </div>
+                                    <div *ngIf="pagoForm.get('monto_abono')?.errors?.['excedesSaldo']"
+                                        class="text-red-500 text-sm mt-1">
+                                        {{ pagoForm.get('monto_abono')?.errors?.['excedesSaldo']?.message }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Información de saldo -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-blue-50 p-4 rounded-lg">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                        Saldo actual
+                                    </label>
+                                    <input type="text"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100"
+                                        [value]="ventaSeleccionada.saldo_pendiente" readonly disabled>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                        Número de envío (referencia)
+                                    </label>
+                                    <input type="text"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100"
+                                        [value]="numero_envio" readonly disabled>
+                                </div>
+                            </div>
+
+                            <!-- Botones de acción -->
+                            <div class="flex justify-end space-x-4 pt-4 border-t border-gray-200">
+                                <button type="button" (click)="cancelarRegistroPago()"
+                                    class="px-6 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors">
+                                    Cancelar
+                                </button>
+                                <button type="submit"
+                                    class="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors disabled:opacity-50">
+                                    Registrar Pago
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -8,6 +8,11 @@ class ProductoService:
         return [producto.to_dict() for producto in productos]
 
     @staticmethod
+    def get_all_productos_activos():
+        productos = ProductoRepo.get_all_activos()
+        return [producto.to_dict() for producto in productos]
+
+    @staticmethod
     def get_producto_by_id(id):
         producto = ProductoRepo.get_by_id(id)
         return producto.to_dict() if producto else None

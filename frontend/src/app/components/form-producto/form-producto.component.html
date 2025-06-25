@@ -1,0 +1,98 @@
+<div class="bg-gray-50">
+    <div class="container mx-auto px-4 py-6 max-w-6xl">
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div class="p-6">
+  
+          <!-- Estado de carga -->
+          <div *ngIf="loading" class="text-center">
+            Cargando datos del producto...
+          </div>
+  
+          <!-- Estado de error -->
+          <div *ngIf="error && id" class="text-center">
+            <div class="text-red-600">Error: {{ error }}</div>
+            <div class="mt-4">
+              <button (click)="cancelar()"
+                class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                Volver a la lista
+              </button>
+            </div>
+          </div>
+  
+          <!-- Formulario -->
+          <div *ngIf="!loading && !(error && id)">
+            <div class="mb-6 pb-2 border-b border-gray-200">
+              <h2 class="text-2xl font-semibold text-gray-800 mb-2 text-center">{{ getTitulo() }}</h2>
+            </div>
+  
+            <form [formGroup]="productoForm" (ngSubmit)="onSubmit()" class="space-y-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  
+                <!-- Código del producto -->
+                <div>
+                  <label for="codigo_producto" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Código del producto <span class="text-red-500">*</span>
+                  </label>
+                  <input type="text" id="codigo_producto" formControlName="codigo_producto" placeholder="Ingrese el codigo del producto"
+                    [class]="'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' + (esVer || !esCrear ? ' bg-gray-50 cursor-not-allowed' : '')"
+                    [disabled]="!esCrear" />
+                </div>
+  
+                <!-- Nombre del producto -->
+                <div>
+                  <label for="nombre_producto" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Nombre del producto <span class="text-red-500">*</span>
+                  </label>
+                  <input type="text" id="nombre_producto" formControlName="nombre_producto"
+                    placeholder="Ingrese el nombre del producto"
+                    [class]="'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' + (esVer ? ' bg-gray-50 cursor-not-allowed' : '')" />
+                </div>
+  
+                <!-- Unidad de medida -->
+                <div>
+                  <label for="unidad_medida" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Unidad de medida <span class="text-red-500">*</span>
+                  </label>
+                  <select id="unidad_medida" formControlName="unidad_medida"
+                    [class]="'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' + (esVer ? ' bg-gray-50 cursor-not-allowed' : '')">
+                    <option value="">Seleccione una opción</option>
+                    <option value="Unidad">Unidad</option>
+                    <option value="Fardo">Fardo</option>
+                    <option value="Paquete">Paquete</option>
+                  </select>
+                </div>
+  
+                <!-- Unidades por fardo/paquete -->
+                <div>
+                  <label for="unidades_por_fardo_paquete" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Unidades por fardo/paquete <span class="text-red-500">*</span>
+                  </label>
+                  <input type="number" id="unidades_por_fardo_paquete" formControlName="unidades_por_fardo_paquete"
+                    min="1" placeholder="Ingrese las unidades por fardo/paquete"
+                    [class]="'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' + (esVer ? ' bg-gray-50 cursor-not-allowed' : '')" />
+                </div>
+              </div>
+  
+              <!-- Botones -->
+              <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                <button type="button" (click)="cancelar()"
+                  class="px-6 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+                  Cancelar
+                </button>
+  
+                <button *ngIf="esVer" type="button" (click)="aceptar()"
+                  class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  Aceptar
+                </button>
+  
+                <button *ngIf="!esVer" type="submit"
+                  class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  {{ esCrear ? 'Guardar' : 'Actualizar' }}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

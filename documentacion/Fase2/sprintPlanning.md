@@ -3,8 +3,6 @@
 ## Sprint Planning
 
 ### Estado del Sprint Backlog
- 
-(esto solo es un ejemplo, porque no se bien como lo quieren)
 | Tarea | Asignado | Estado |
 |-------|----------|---------|
 | Backend/Inventario |  Edwin Sandoval | Pendiente |
@@ -24,5 +22,12 @@
 - Tablero Kanban con las tareas del sprint
 
 ![Tablero Inicial](./images/JiraInicial.png)
+
+---
+
+### Tablero Fianl
+- Tablero Kanban con las tareas del sprint pasadas a test
+
+![Tablero Fianl](./images/JiraFinal.png)
 
 [← Regresar al README](../../../README.md)

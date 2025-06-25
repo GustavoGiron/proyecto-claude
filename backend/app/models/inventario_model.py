@@ -9,7 +9,7 @@ class Inventario(db.Model):
     producto_id = db.Column('ProductoId', db.Integer, db.ForeignKey('Productos.Id'), nullable=False, unique=True)
     stock_disponible = db.Column('StockDisponible', db.Integer, nullable=False, default=0)
     stock_apartado = db.Column('StockApartado', db.Integer, nullable=False, default=0)
-    stock_total = db.Column('StockTotal', db.Integer)
+    stock_total = db.Column('StockTotal', db.Integer, server_default=db.text('(StockDisponible + StockApartado)'))
     fecha_ultima_actualizacion = db.Column('FechaUltimaActualizacion', db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     usuario_ultima_actualizacion = db.Column('UsuarioUltimaActualizacion', db.String(50))
     
@@ -104,7 +104,7 @@ class DetalleIngresoMercancia(db.Model):
     producto_id = db.Column('ProductoId', db.Integer, db.ForeignKey('Productos.Id'), nullable=False)
     cantidad_fardos_paquetes = db.Column('CantidadFardosPaquetes', db.Integer, nullable=False)
     unidades_por_fardo_paquete = db.Column('UnidadesPorFardoPaquete', db.Integer, nullable=False)
-    unidades_totales = db.Column('UnidadesTotales', db.Integer)
+    unidades_totales = db.Column('UnidadesTotales', db.Integer, server_default=db.text('(CantidadFardosPaquetes * UnidadesPorFardoPaquete)'))
     usuario_creacion = db.Column('UsuarioCreacion', db.String(50))
     
     ingreso_mercancia = db.relationship('IngresoMercancia', backref='detalles')

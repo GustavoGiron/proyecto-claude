@@ -59,7 +59,6 @@ export class FormVendedorComponent implements OnInit {
 
     this.vendedorService.obtenerVendedor(this.id).subscribe({
       next: (response) => {
-        console.log('Respuesta del backend:', response);
         this.vendedorForm.patchValue({
           nombres: response.nombres || '',
           apellidos: response.apellidos || '',

@@ -443,12 +443,32 @@ def create_ingreso():
         return jsonify({"error": "No se proporcionaron datos"}), 400
     
     usuario_creacion = request.headers.get('X-Usuario', 'sistema')
+    
+    # Extraer detalles si vienen en el request
+    detalles = data.pop('detalles', None)
+    
     ingreso, error = IngresoMercanciaService.create_ingreso(data, usuario_creacion)
     
     if error:
         return jsonify({"error": error}), 400
     
-    return jsonify(ingreso), 201
+    # Si hay detalles, procesarlos
+    if detalles and isinstance(detalles, list):
+        for detalle in detalles:
+            detalle['usuario_creacion'] = usuario_creacion
+            detalle_result, detalle_error = IngresoMercanciaService.add_detalle_ingreso(
+                ingreso['id'], 
+                detalle, 
+                usuario_creacion
+            )
+            if detalle_error:
+                # Log del error pero continuar con otros detalles
+                print(f"Error al agregar detalle: {detalle_error}")
+    
+    # Obtener el ingreso completo con detalles
+    ingreso_completo = IngresoMercanciaService.get_ingreso_by_id(ingreso['id'])
+    
+    return jsonify(ingreso_completo), 201
 
 @inventario_bp.route('/ingresos/<int:id>', methods=['PUT'])
 @handle_exceptions(servicio='Inventario', cod_mensaje=3012)

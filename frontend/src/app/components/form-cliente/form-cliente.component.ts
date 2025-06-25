@@ -90,7 +90,7 @@ export class FormClienteComponent implements OnInit {
 
     this.departamentoService.obtenerDepartamentos().subscribe({
       next: (departamentos: Departamento[]) => {
-        console.log('Departamentos cargados:', departamentos);
+       
         this.departamentos = departamentos;
         this.loadingDepartamentos = false;
 
@@ -119,13 +119,12 @@ export class FormClienteComponent implements OnInit {
 
   cargarMunicipios(departamentoId: number): void {
     this.loadingMunicipios = true;
-    console.log('Cargando municipios para departamento:', departamentoId);
+  
 
     this.clienteForm.get('municipio_id')?.disable();
 
     this.departamentoService.obtenerMunicipiosPorDepartamento(departamentoId).subscribe({
       next: (municipios: Municipio[]) => {
-        console.log('Municipios cargados:', municipios);
         this.municipios = municipios;
         this.loadingMunicipios = false;
 
@@ -158,7 +157,6 @@ export class FormClienteComponent implements OnInit {
 
     this.clienteService.obtenerCliente(this.id).subscribe({
       next: (cliente) => {
-        console.log('Cliente cargado:', cliente);
 
         this.clienteForm.patchValue({
           nombre_contacto: cliente.nombre_contacto || '',
@@ -198,9 +196,6 @@ export class FormClienteComponent implements OnInit {
 
     if (this.clienteForm.valid) {
       const clienteData: Cliente = this.clienteForm.value;
-
-      console.log('Valor de tipo_venta_autoriz:', clienteData.tipo_venta_autoriz);
-      console.log('Datos completos del cliente:', clienteData);
 
       if (this.esCrear) {
         this.clienteService.crearCliente(clienteData).subscribe({

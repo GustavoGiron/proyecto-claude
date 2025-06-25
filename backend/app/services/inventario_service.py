@@ -1,11 +1,14 @@
 from app.repositories.inventario_repo import (
-    InventarioRepo, 
-    MovimientoInventarioRepo, 
-    IngresoMercanciaRepo, 
+    InventarioRepo,
+    MovimientoInventarioRepo,
+    IngresoMercanciaRepo,
     DetalleIngresoMercanciaRepo
 )
 from app.repositories.productos_repo import ProductoRepo
 from datetime import datetime
+from app.utils.emailalert import enviar_alerta_stock_bajo
+import os
+
 
 class InventarioService:
     @staticmethod
@@ -29,29 +32,29 @@ class InventarioService:
         for field in required_fields:
             if not data.get(field):
                 return None, f"Campo requerido: {field}"
-        
+
         producto = ProductoRepo.get_by_id(data['producto_id'])
         if not producto:
             return None, "Producto no encontrado"
-        
+
         if usuario_creacion:
             data['usuario_ultima_actualizacion'] = usuario_creacion
-        
+
         inventario, error = InventarioRepo.create(data)
         if error:
             return None, error
-        
+
         return inventario.to_dict(), None
 
     @staticmethod
     def update_inventario(id, data, usuario_modificacion=None):
         if usuario_modificacion:
             data['usuario_ultima_actualizacion'] = usuario_modificacion
-        
+
         inventario, error = InventarioRepo.update(id, data)
         if error:
             return None, error
-        
+
         return inventario.to_dict(), None
 
     @staticmethod
@@ -64,42 +67,79 @@ class InventarioService:
         inventarios = InventarioRepo.get_stock_bajo_minimo()
         return [inventario.to_dict() for inventario in inventarios]
 
+
     @staticmethod
     def registrar_movimiento_inventario(producto_id, tipo_movimiento, cantidad, referencia=None, motivo=None, usuario=None):
         tipos_validos = ['Ingreso', 'Salida', 'Ajuste', 'Apartado', 'Liberado']
         if tipo_movimiento not in tipos_validos:
             return None, f"Tipo de movimiento debe ser uno de: {', '.join(tipos_validos)}"
-        
+
         inventario = InventarioRepo.get_by_producto_id(producto_id)
         if not inventario:
-            return None, "No existe inventario para este producto"
-        
+            inventario_data = {
+                'producto_id': producto_id,
+                'stock_disponible': 0,
+                'stock_apartado': 0,
+                'usuario_ultima_actualizacion': usuario
+            }
+            inventario, error = InventarioRepo.create(inventario_data)
+            if error:
+                return None, f"Error al crear inventario: {error}"
+
         stock_anterior = inventario.stock_disponible
-        
+        nuevo_stock_disponible = stock_anterior
+        nuevo_stock_apartado = inventario.stock_apartado
+
         if tipo_movimiento == 'Ingreso':
-            nuevo_stock_disponible = stock_anterior + cantidad
+            nuevo_stock_disponible += cantidad
         elif tipo_movimiento == 'Salida':
             if stock_anterior < cantidad:
                 return None, "Stock insuficiente para la salida"
-            nuevo_stock_disponible = stock_anterior - cantidad
+            nuevo_stock_disponible -= cantidad
         elif tipo_movimiento == 'Ajuste':
             nuevo_stock_disponible = cantidad
         elif tipo_movimiento == 'Apartado':
             if stock_anterior < cantidad:
                 return None, "Stock insuficiente para apartar"
-            nuevo_stock_disponible = stock_anterior - cantidad
-            nuevo_stock_apartado = inventario.stock_apartado + cantidad
-            InventarioRepo.actualizar_stock(producto_id, nuevo_stock_disponible, nuevo_stock_apartado, usuario)
+            nuevo_stock_disponible -= cantidad
+            nuevo_stock_apartado += cantidad
         elif tipo_movimiento == 'Liberado':
             if inventario.stock_apartado < cantidad:
                 return None, "Stock apartado insuficiente para liberar"
-            nuevo_stock_disponible = stock_anterior + cantidad
-            nuevo_stock_apartado = inventario.stock_apartado - cantidad
-            InventarioRepo.actualizar_stock(producto_id, nuevo_stock_disponible, nuevo_stock_apartado, usuario)
-        
+            nuevo_stock_disponible += cantidad
+            nuevo_stock_apartado -= cantidad
+
+        # Solo actualizar stock si no es Apartado o Liberado
         if tipo_movimiento not in ['Apartado', 'Liberado']:
-            InventarioRepo.actualizar_stock(producto_id, nuevo_stock_disponible, None, usuario)
-        
+            InventarioRepo.actualizar_stock(
+                producto_id, nuevo_stock_disponible, None, usuario)
+        else:
+            InventarioRepo.actualizar_stock(
+                producto_id, nuevo_stock_disponible, nuevo_stock_apartado, usuario)
+        '''
+        # Obtener correos de Gerentes
+        gerentes_inventario = UsuarioRepo.get_usuarios_por_rol("Gerente de Inventario")
+        gerentes_general = UsuarioRepo.get_usuarios_por_rol("Gerente General")
+
+        destinatarios = [
+            u.correo for u in (gerentes_inventario + gerentes_general)
+        ]
+
+        nombre_producto = inventario.producto.nombre_producto if inventario.producto else "Producto Desconocido"
+        if destinatarios:
+            enviar_alerta_stock_bajo(producto_id, nuevo_stock_disponible, nombre_producto, destinatarios)
+        else:
+            print("No hay destinatarios configurados para alertas.")
+
+        '''
+
+        nombre_producto = inventario.producto.nombre_producto if inventario.producto else "Producto Desconocido"
+        # Verificar stock después de cualquier cambio
+        STOCK_MINIMO = int(os.getenv('STOCK_MINIMO_ALERTA', '50'))
+        if nuevo_stock_disponible < STOCK_MINIMO:
+            enviar_alerta_stock_bajo(producto_id, nuevo_stock_disponible, nombre_producto)
+
+        # Crear registro del movimiento
         movimiento_data = {
             'producto_id': producto_id,
             'tipo_movimiento': tipo_movimiento,
@@ -110,12 +150,13 @@ class InventarioService:
             'motivo': motivo,
             'usuario_movimiento': usuario
         }
-        
+
         movimiento, error = MovimientoInventarioRepo.create(movimiento_data)
         if error:
             return None, error
-        
+
         return movimiento.to_dict(), None
+    
 
     @staticmethod
     def get_movimientos_by_producto(producto_id):
@@ -129,7 +170,8 @@ class InventarioService:
 
     @staticmethod
     def get_movimientos_by_tipo(tipo_movimiento):
-        movimientos = MovimientoInventarioRepo.get_by_tipo_movimiento(tipo_movimiento)
+        movimientos = MovimientoInventarioRepo.get_by_tipo_movimiento(
+            tipo_movimiento)
         return [movimiento.to_dict() for movimiento in movimientos]
 
     @staticmethod
@@ -139,11 +181,13 @@ class InventarioService:
                 fecha_inicio = datetime.fromisoformat(fecha_inicio)
             if isinstance(fecha_fin, str):
                 fecha_fin = datetime.fromisoformat(fecha_fin)
-            
-            movimientos = MovimientoInventarioRepo.get_by_fecha_rango(fecha_inicio, fecha_fin)
+
+            movimientos = MovimientoInventarioRepo.get_by_fecha_rango(
+                fecha_inicio, fecha_fin)
             return [movimiento.to_dict() for movimiento in movimientos]
         except ValueError as e:
             return None, f"Formato de fecha inválido: {str(e)}"
+
 
 class IngresoMercanciaService:
     @staticmethod
@@ -156,71 +200,78 @@ class IngresoMercanciaService:
         ingreso = IngresoMercanciaRepo.get_by_id(id)
         if not ingreso:
             return None
-        
+
         ingreso_dict = ingreso.to_dict()
         detalles = DetalleIngresoMercanciaRepo.get_by_ingreso_id(id)
         ingreso_dict['detalles'] = [detalle.to_dict() for detalle in detalles]
-        
+
         return ingreso_dict
 
     @staticmethod
     def create_ingreso(data, usuario_creacion=None):
-        required_fields = ['fecha_ingreso', 'numero_contenedor', 'numero_duca', 'fecha_duca']
+        required_fields = ['fecha_ingreso',
+                           'numero_contenedor', 'numero_duca', 'fecha_duca']
         for field in required_fields:
             if not data.get(field):
                 return None, f"Campo requerido: {field}"
-        
+
         if usuario_creacion:
             data['usuario_creacion'] = usuario_creacion
-        
+
         if isinstance(data.get('fecha_ingreso'), str):
             try:
-                data['fecha_ingreso'] = datetime.fromisoformat(data['fecha_ingreso']).date()
+                data['fecha_ingreso'] = datetime.fromisoformat(
+                    data['fecha_ingreso']).date()
             except ValueError:
                 return None, "Formato de fecha_ingreso inválido"
-        
+
         if isinstance(data.get('fecha_duca'), str):
             try:
-                data['fecha_duca'] = datetime.fromisoformat(data['fecha_duca']).date()
+                data['fecha_duca'] = datetime.fromisoformat(
+                    data['fecha_duca']).date()
             except ValueError:
                 return None, "Formato de fecha_duca inválido"
-        
+
         if data.get('fecha_duca_rectificada') and isinstance(data.get('fecha_duca_rectificada'), str):
             try:
-                data['fecha_duca_rectificada'] = datetime.fromisoformat(data['fecha_duca_rectificada']).date()
+                data['fecha_duca_rectificada'] = datetime.fromisoformat(
+                    data['fecha_duca_rectificada']).date()
             except ValueError:
                 return None, "Formato de fecha_duca_rectificada inválido"
-        
+
         ingreso, error = IngresoMercanciaRepo.create(data)
         if error:
             return None, error
-        
+
         return ingreso.to_dict(), None
 
     @staticmethod
     def update_ingreso(id, data):
         if isinstance(data.get('fecha_ingreso'), str):
             try:
-                data['fecha_ingreso'] = datetime.fromisoformat(data['fecha_ingreso']).date()
+                data['fecha_ingreso'] = datetime.fromisoformat(
+                    data['fecha_ingreso']).date()
             except ValueError:
                 return None, "Formato de fecha_ingreso inválido"
-        
+
         if isinstance(data.get('fecha_duca'), str):
             try:
-                data['fecha_duca'] = datetime.fromisoformat(data['fecha_duca']).date()
+                data['fecha_duca'] = datetime.fromisoformat(
+                    data['fecha_duca']).date()
             except ValueError:
                 return None, "Formato de fecha_duca inválido"
-        
+
         if data.get('fecha_duca_rectificada') and isinstance(data.get('fecha_duca_rectificada'), str):
             try:
-                data['fecha_duca_rectificada'] = datetime.fromisoformat(data['fecha_duca_rectificada']).date()
+                data['fecha_duca_rectificada'] = datetime.fromisoformat(
+                    data['fecha_duca_rectificada']).date()
             except ValueError:
                 return None, "Formato de fecha_duca_rectificada inválido"
-        
+
         ingreso, error = IngresoMercanciaRepo.update(id, data)
         if error:
             return None, error
-        
+
         return ingreso.to_dict(), None
 
     @staticmethod
@@ -233,25 +284,27 @@ class IngresoMercanciaService:
         ingreso = IngresoMercanciaRepo.get_by_id(ingreso_id)
         if not ingreso:
             return None, "Ingreso de mercancía no encontrado"
-        
-        required_fields = ['producto_id', 'cantidad_fardos_paquetes', 'unidades_por_fardo_paquete']
+
+        required_fields = [
+            'producto_id', 'cantidad_fardos_paquetes', 'unidades_por_fardo_paquete']
         for field in required_fields:
             if not detalle_data.get(field):
                 return None, f"Campo requerido: {field}"
-        
+
         producto = ProductoRepo.get_by_id(detalle_data['producto_id'])
         if not producto:
             return None, "Producto no encontrado"
-        
+
         detalle_data['ingreso_mercancia_id'] = ingreso_id
         if usuario_creacion:
             detalle_data['usuario_creacion'] = usuario_creacion
-        
+
         detalle, error = DetalleIngresoMercanciaRepo.create(detalle_data)
         if error:
             return None, error
-        
-        unidades_totales = detalle_data['cantidad_fardos_paquetes'] * detalle_data['unidades_por_fardo_paquete']
+
+        unidades_totales = detalle_data['cantidad_fardos_paquetes'] * \
+            detalle_data['unidades_por_fardo_paquete']
         InventarioService.registrar_movimiento_inventario(
             detalle_data['producto_id'],
             'Ingreso',
@@ -260,5 +313,5 @@ class IngresoMercanciaService:
             motivo=f"Ingreso de mercancía - Contenedor: {ingreso.numero_contenedor}",
             usuario=usuario_creacion
         )
-        
+
         return detalle.to_dict(), None

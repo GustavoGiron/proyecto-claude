@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  backend:
+    container_name: backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: tu_usuario_dockerhub/ayd2-backend:latest
+    ports:
+      - "5000:5000"
+    restart: always
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend/:/app/
+    command: >
+      sh -c "pip install -r requirements.txt &&
+             gunicorn --bind 0.0.0.0:5000 --workers 4 --timeout 120 wsgi:app"
+
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: tu_usuario_dockerhub/ayd2-frontend:latest
+    ports:
+      - "4200:80"
+    restart: always
+    environment:
+      - API_URL=http://localhost:5000
+    volumes:
+      - ./frontend/:/app/
+
+networks:
+  default:
+    name: red_ayd2
+    external: false
