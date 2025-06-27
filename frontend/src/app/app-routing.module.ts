@@ -17,6 +17,8 @@ import { ListaInventarioComponent } from './components/lista-inventario/lista-in
 import { FormVentaComponent } from './components/form-venta/form-venta.component';
 import { RegistrarSalidaComponent } from './components/registrar-salida/registrar-salida.component';
 import { RegistrarPagoComponent } from './components/registrar-pago/registrar-pago.component';
+import { FormUsuarioComponent } from './components/form-usuario/form-usuario.component';
+import { ListUsuarioComponent } from './components/list-usuario/list-usuario.component';
 
 const routes: Routes = [
   // Ruta pública para login
@@ -53,6 +55,10 @@ const routes: Routes = [
       { path: 'salidas', component: RegistrarSalidaComponent },
       { path: 'registrar-pago', component: RegistrarPagoComponent },
       { path: 'pagos', component: RegistrarPagoComponent },
+      { path: 'form-usuario', component: FormUsuarioComponent },
+      { path: 'form-usuario/:modo/:id', component: FormUsuarioComponent },
+      { path: 'lista-usuario', component: ListUsuarioComponent },
+      { path: 'usuarios', component: ListUsuarioComponent },
       
       // Redirección por defecto dentro del layout
       { path: '', redirectTo: '/dashboard', pathMatch: 'full' }

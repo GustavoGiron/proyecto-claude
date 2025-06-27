@@ -87,24 +87,24 @@ Todas las grabaciones de los daily standups están disponibles en el siguiente e
 - **¿Tengo algún impedimento?**: No.
 
 ### Integrante 2 - Pedro Luis Pu Tavico
-- **¿Qué hice ayer?**: 
-- **¿Qué haré hoy?**: 
-- **¿Tengo algún impedimento?**: 
+- **¿Qué hice ayer?**: Ayer realize cambios en el componente registrar pago ya que por el momento solo se hacen busquedas por numero de envio y agregare busquedas por nombre de cliente.
+- **¿Qué haré hoy?**: Hoy voy a realizar 1 prueba de integracion para verificar la correcta funcionalidad de enviar correo cuando el stock ha llegado a un numero establecido.
+- **¿Tengo algún impedimento?**: No, por el momento no tengo ningun impedimento.
 
 ### Integrante 3 - Carlos Raul Rangel Robelo
-- **¿Qué hice ayer?**: 
-- **¿Qué haré hoy?**: 
-- **¿Tengo algún impedimento?**: 
+- **¿Qué hice ayer?**: Realice distintas pruebas controladas sobre una versión preliminar del pipeline.
+- **¿Qué haré hoy?**: Se estará revisando que el despliegue con el pipeline sea correcto.
+- **¿Tengo algún impedimento?**: No tengo ningun impedimento.
 
 ### Integrante 4 - Gustavo Alejandro Giron Arriola
-- **¿Qué hice ayer?**: 
-- **¿Qué haré hoy?**: 
-- **¿Tengo algún impedimento?**: 
+- **¿Qué hice ayer?**: Me reuni con mis compañeros para coordinar las validaciones y pruebas funcionales
+- **¿Qué haré hoy?**: Realizre la prueba de aceptacion y la documentare 
+- **¿Tengo algún impedimento?**: El login y la autenticacion no funcionan y no puedo acceder a ninguna funcionalidad
 
 ### Integrante 5 - Oscar Eduardo Morales Girón
-- **¿Qué hice ayer?**: 
-- **¿Qué haré hoy?**: 
-- **¿Tengo algún impedimento?**: 
+- **¿Qué hice ayer?**: Trabaje en la validación del login, de la misma manera comprobe los permisos para el accesos y realice pruebas del logout. 
+- **¿Qué haré hoy?**: Analizare los diagramas de casos de uso para actuializarlos y realziar la integración de un nuevo posible actor que interviene en el funcionamiento del sistema, por lo que se requerira de un analisis detallado de los casos de uso expandidos, arquitecturas implementadas y de despliegue.
+- **¿Tengo algún impedimento?**: No.
 
 ### Integrante 6 - Ediwn Sandoval Lopez
 - **¿Qué hice ayer?**: 
@@ -117,8 +117,8 @@ Todas las grabaciones de los daily standups están disponibles en el siguiente e
 
 ### Integrante 1 - Kevin Estuardo Secaida Molina
 - **¿Qué hice ayer?**: Solucioné el inconveniente de envío de correos a múltiples destinatarios, ahora puedo enviar alertas de stock bajo a varios correos electrónicos. Además, continué con las pruebas unitarias de las funcionalidades implementadas. 
-- **¿Qué haré hoy?**: 
-- **¿Tengo algún impedimento?**: 
+- **¿Qué haré hoy?**: Terminare las pruebas unitarias solicitadas e implementare el CRUD para usuarios, asegurando que cada usuario tenga los permisos adecuados para acceder a las funcionalidades del sistema.
+- **¿Tengo algún impedimento?**:  No tengo impedimentos.
 
 ### Integrante 2 - Pedro Luis Pu Tavico
 - **¿Qué hice ayer?**: 

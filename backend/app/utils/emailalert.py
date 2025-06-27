@@ -48,12 +48,12 @@ def enviar_alerta_stock_bajo(producto_id, stock_actual, nombre_producto, destina
         print("No hay destinatarios válidos.")
         return False
 
-    from_email = os.getenv("EMAIL_USER")
-    password = os.getenv("EMAIL_PASSWORD")
-    smtp_host = os.getenv("EMAIL_HOST")
-    smtp_port = int(os.getenv("EMAIL_PORT"))
-    minimo_permitido = os.getenv("STOCK_MINIMO_ALERTA", "100")
-    
+    from_email = 'panfilo.pf.pf88@gmail.com'
+    password = 'naqb pyby rejc hrnh'
+    smtp_host = 'smtp.gmail.com'
+    smtp_port = '587'
+    minimo_permitido = '100'
+         
     subject = "Alerta de Stock Bajo"
     body = construir_cuerpo_alerta(producto_id, stock_actual, nombre_producto, minimo_permitido)
     mensaje = crear_mensaje_email(from_email, destinatarios, subject, body)

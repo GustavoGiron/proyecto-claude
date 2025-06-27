@@ -49,5 +49,20 @@
                 </button>
             </div>
         </div>
+        <!-- Usuarios -->
+        <div *ngIf="hasPermission('Usuarios', 'read')"
+            class="bg-white rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+            <div class="p-8 text-center">
+                <div class="mb-6">
+                    <i class="fas fa-user-cog text-6xl text-red-600"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">Usuarios</h3>
+                <button [routerLink]="['/lista-usuario']"
+                    class="w-full bg-red-600 text-white py-3 px-6 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors duration-200 font-semibold">
+                    Gestionar Usuarios
+                </button>
+            </div>
+        </div>
+
     </div>
 </div>

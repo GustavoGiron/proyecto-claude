@@ -25,6 +25,8 @@ import { RegistrarSalidaComponent } from './components/registrar-salida/registra
 import { RegistrarPagoComponent } from './components/registrar-pago/registrar-pago.component';
 import { LoginComponent } from './components/login/login.component';
 import { LayoutComponent } from './components/layout/layout.component';
+import { FormUsuarioComponent } from './components/form-usuario/form-usuario.component';
+import { ListUsuarioComponent } from './components/list-usuario/list-usuario.component';
 
 @NgModule({
   declarations: [
@@ -46,6 +48,8 @@ import { LayoutComponent } from './components/layout/layout.component';
     RegistrarPagoComponent,
     LoginComponent,
     LayoutComponent,
+    FormUsuarioComponent,
+    ListUsuarioComponent,
   ],
   imports: [
     BrowserModule,

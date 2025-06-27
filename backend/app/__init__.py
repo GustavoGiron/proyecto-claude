@@ -29,9 +29,20 @@ def create_app(testing=False):
     app.config['DEBUG'] = os.getenv('FLASK_DEBUG', 'false').lower() == 'true'
 
     # Configurar CORS
-    CORS(app, origins=['*'],
-         methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-         allow_headers=['Content-Type', 'Authorization'])
+    CORS(app,
+     origins=[
+         "http://34.57.96.87",
+         "http://127.0.0.1:4200",
+         "http://127.0.0.1:3000",
+         "http://localhost:4200",
+         "http://localhost:3000"
+     ],
+     supports_credentials=True,
+     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+     allow_headers=["Content-Type", "Authorization"])
+    # CORS(app, origins=['*'],
+    #      methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    #      allow_headers=['Content-Type', 'Authorization'])
 
     # Inicializa extensiones
     db.init_app(app)
@@ -238,7 +249,8 @@ def create_app(testing=False):
         inventario_bp,
         vendedores_bp,
         ventas_bp,
-        ingresos_bp
+        ingresos_bp,
+        usuarios_bp
     )
     from app.api.auth_api import auth_bp
 
@@ -250,5 +262,6 @@ def create_app(testing=False):
     app.register_blueprint(vendedores_bp,    url_prefix='/api/vendedores')
     app.register_blueprint(ventas_bp,        url_prefix='/api/ventas')
     app.register_blueprint(ingresos_bp,      url_prefix='/api/ingresos')
+    app.register_blueprint(usuarios_bp,     url_prefix='/api/usuarios')
 
     return app

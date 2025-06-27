@@ -8,3 +8,4 @@ from .inventario_api import inventario_bp
 from .vendedores_api import vendedores_bp
 from .ventas_api import ventas_bp
 from .ingresos_api import ingresos_bp
+from .usuarios_api import usuarios_bp

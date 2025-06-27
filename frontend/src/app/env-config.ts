@@ -1,3 +1,4 @@
 export const EnvConfig = {
-    apiUrl: 'http://127.0.0.1:5000/api',
+    apiUrl: 'http://34.121.52.166/api',
+    //apiUrl: 'http://localhost:5000/api'
 };
