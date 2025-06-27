@@ -1,3 +1,3 @@
 export const EnvConfig = {
-    apiUrl: (window as any)['env']?.apiUrl,
+    apiUrl: 'http://127.0.0.1:5000/api',
 };

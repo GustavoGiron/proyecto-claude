@@ -1,3 +1,4 @@
+import threading
 from app.repositories.inventario_repo import (
     InventarioRepo,
     MovimientoInventarioRepo,
@@ -5,6 +6,7 @@ from app.repositories.inventario_repo import (
     DetalleIngresoMercanciaRepo
 )
 from app.repositories.productos_repo import ProductoRepo
+from app.repositories.usuarios_repo import UsuariosRepository
 from datetime import datetime
 from app.utils.emailalert import enviar_alerta_stock_bajo
 import os
@@ -70,6 +72,7 @@ class InventarioService:
 
     @staticmethod
     def registrar_movimiento_inventario(producto_id, tipo_movimiento, cantidad, referencia=None, motivo=None, usuario=None):
+        usuarios_repo = UsuariosRepository()
         tipos_validos = ['Ingreso', 'Salida', 'Ajuste', 'Apartado', 'Liberado']
         if tipo_movimiento not in tipos_validos:
             return None, f"Tipo de movimiento debe ser uno de: {', '.join(tipos_validos)}"
@@ -116,28 +119,29 @@ class InventarioService:
         else:
             InventarioRepo.actualizar_stock(
                 producto_id, nuevo_stock_disponible, nuevo_stock_apartado, usuario)
-        '''
-        # Obtener correos de Gerentes
-        gerentes_inventario = UsuarioRepo.get_usuarios_por_rol("Gerente de Inventario")
-        gerentes_general = UsuarioRepo.get_usuarios_por_rol("Gerente General")
+        
+        # Verificar si el stock disponible es menor que el mínimo
+        STOCK_MINIMO = int(os.getenv('STOCK_MINIMO_ALERTA', '100'))
+        if tipo_movimiento == 'Salida' and nuevo_stock_disponible < STOCK_MINIMO:
+            # Obtener usuarios con rol 1 (Gerencia General)
+            gerentes_rol1 = usuarios_repo.get_by_role_id(1)
+            # Obtener usuarios con rol 3 (Gerencia Inventario)
+            gerentes_rol3 = usuarios_repo.get_by_role_id(3)
+            # Extraer solo los correos
+            correos_rol1 = [u.email for u in gerentes_rol1 if u.email]
+            correos_rol3 = [u.email for u in gerentes_rol3 if u.email]
+            destinatarios = correos_rol1 + correos_rol3
 
-        destinatarios = [
-            u.correo for u in (gerentes_inventario + gerentes_general)
-        ]
-
-        nombre_producto = inventario.producto.nombre_producto if inventario.producto else "Producto Desconocido"
-        if destinatarios:
-            enviar_alerta_stock_bajo(producto_id, nuevo_stock_disponible, nombre_producto, destinatarios)
-        else:
-            print("No hay destinatarios configurados para alertas.")
-
-        '''
-
-        nombre_producto = inventario.producto.nombre_producto if inventario.producto else "Producto Desconocido"
-        # Verificar stock después de cualquier cambio
-        STOCK_MINIMO = int(os.getenv('STOCK_MINIMO_ALERTA', '50'))
-        if nuevo_stock_disponible < STOCK_MINIMO:
-            enviar_alerta_stock_bajo(producto_id, nuevo_stock_disponible, nombre_producto)
+            nombre_producto = inventario.producto.nombre_producto if inventario.producto else "Producto Desconocido"
+            # Enviar alerta de stock bajo
+            try:
+                thread = threading.Thread(
+                    target=enviar_alerta_stock_bajo,
+                    args=(producto_id, nuevo_stock_disponible, nombre_producto, destinatarios)
+                )
+                thread.start()
+            except Exception as e:
+                print(f"Error al enviar alerta de stock bajo: {e}")
 
         # Crear registro del movimiento
         movimiento_data = {

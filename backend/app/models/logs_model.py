@@ -1,7 +1,7 @@
 from app import db
 
 class Log(db.Model):
-    __tablename__ = 'logs'
+    __tablename__ = 'Logs'
     id = db.Column('Id', db.Integer, primary_key=True)
     fecha = db.Column('Fecha', db.DateTime, server_default=db.func.now())
     funcion = db.Column('Funcion', db.String(100), nullable=False)

@@ -17,6 +17,19 @@ class ClienteService:
     @staticmethod
     def get_by_codigo(codigo):
         return ClienteRepo.get_by_codigo(codigo)
+    
+    @staticmethod
+    def get_by_nombre_contacto(nombre_contacto):
+        return ClienteRepo.get_by_nombre_contacto(nombre_contacto)
+    
+    @staticmethod
+    def search_clientes(nombre_contacto=None, nombre_negocio=None, codigo_cliente=None, nit=None):
+        return ClienteRepo.search(
+            nombre_contacto=nombre_contacto,
+            nombre_negocio=nombre_negocio,
+            codigo_cliente=codigo_cliente,
+            nit=nit
+        )
 
     @staticmethod
     def create(data):

@@ -12,17 +12,16 @@ class AuthService:
     def login(self, username, password):
         try:
             usuario = self.usuarios_repo.get_by_username(username)
-            
             if not usuario:
-                log_info(f"Intento de login fallido - Usuario no encontrado: {username}")
+                log_info("auth", "login", f"Intento de login fallido - Usuario no encontrado: {username}")
                 return None, "Usuario o contraseña incorrectos"
             
             if not usuario.is_active:
-                log_info(f"Intento de login fallido - Usuario inactivo: {username}")
+                log_info("auth", "login", f"Intento de login fallido - Usuario inactivo: {username}")
                 return None, "Usuario inactivo"
             
             if not usuario.check_password(password):
-                log_info(f"Intento de login fallido - Contraseña incorrecta: {username}")
+                log_info("auth", "login", f"Intento de login fallido - Contraseña incorrecta: {username}")
                 return None, "Usuario o contraseña incorrectos"
             
             self.usuarios_repo.update_last_login(usuario.id)
@@ -30,7 +29,7 @@ class AuthService:
             access_token = self.generate_access_token(usuario)
             refresh_token = self.generate_refresh_token(usuario)
             
-            log_info(f"Login exitoso: {username}")
+            log_info("auth", "login", f"Login exitoso: {username}")
             
             return {
                 'access_token': access_token,
@@ -39,7 +38,7 @@ class AuthService:
             }, None
             
         except Exception as e:
-            log_error(f"Error en login: {str(e)}")
+            log_error("auth", "login", f"Error en login: {str(e)}")
             return None, "Error al procesar la solicitud"
     
     def generate_access_token(self, usuario):
@@ -106,7 +105,7 @@ class AuthService:
             return {'access_token': access_token}, None
             
         except Exception as e:
-            log_error(f"Error al refrescar token: {str(e)}")
+            log_error("auth", "refresh_token", f"Error al refrescar token: {str(e)}")
             return None, "Error al procesar la solicitud"
     
     def get_user_permissions(self, user_id):
@@ -136,5 +135,26 @@ class AuthService:
             return permissions, None
             
         except Exception as e:
-            log_error(f"Error al obtener permisos: {str(e)}")
+            log_error("auth", "get_permissions", f"Error al obtener permisos: {str(e)}")
+            return None, "Error al procesar la solicitud"
+        
+    
+    def get_user_role(self, role_id):
+        try:
+            usuario = self.usuarios_repo.get_by_role_id(role_id)
+            
+            if not usuario or not usuario.role:
+                return None, "Usuario o rol no encontrado"
+            
+            role_info = {
+                'id': usuario.role.id,
+                'nombre': usuario.role.nombre,
+                'email': usuario.email,
+                'descripcion': usuario.role.descripcion
+            }
+            
+            return role_info, None
+            
+        except Exception as e:
+            log_error("auth", "get_user_role", f"Error al obtener rol del usuario: {str(e)}")
             return None, "Error al procesar la solicitud"

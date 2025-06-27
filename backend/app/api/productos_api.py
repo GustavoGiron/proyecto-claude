@@ -3,14 +3,17 @@ from flask import Blueprint, jsonify, request
 from app.services.productos_service import ProductoService
 from app.dtos.productos_dto import ProductoSchema
 from app.utils.logger import handle_exceptions
+from app.utils.auth_middleware import token_required, require_permission
 
 productos_bp = Blueprint('productos_bp', __name__)
 producto_schema = ProductoSchema()
 productos_schema = ProductoSchema(many=True)
 
 @productos_bp.route('/', methods=['GET'])
+@token_required
+@require_permission('Productos', 'read')
 @handle_exceptions(servicio='Productos', cod_mensaje=2001)
-def get_productos():
+def get_productos(current_user):
     """
     Listar todos los productos
     ---
@@ -44,8 +47,10 @@ def get_productos():
     return jsonify(productos), 200
 
 @productos_bp.route('/<int:id>', methods=['GET'])
+@token_required
+@require_permission('Productos', 'read')
 @handle_exceptions(servicio='Productos', cod_mensaje=2002)
-def get_producto(id):
+def get_producto(current_user, id):
     """
     Obtener producto por ID
     ---
@@ -76,8 +81,10 @@ def get_producto(id):
     return jsonify(producto), 200
 
 @productos_bp.route('/codigo/<string:codigo>', methods=['GET'])
+@token_required
+@require_permission('Productos', 'read')
 @handle_exceptions(servicio='Productos', cod_mensaje=2002)
-def get_producto_by_codigo(codigo):
+def get_producto_by_codigo(current_user, codigo):
     """
     Obtener producto por código
     ---
@@ -108,8 +115,10 @@ def get_producto_by_codigo(codigo):
     return jsonify(producto), 200
 
 @productos_bp.route('/', methods=['POST'])
+@token_required
+@require_permission('Productos', 'create')
 @handle_exceptions(servicio='Productos', cod_mensaje=2003)
-def create_producto():
+def create_producto(current_user):
     """
     Crear nuevo producto
     ---
@@ -167,7 +176,7 @@ def create_producto():
     if not data:
         return jsonify({"error": "No se proporcionaron datos"}), 400
     
-    usuario_creacion = request.headers.get('X-Usuario', 'sistema')
+    usuario_creacion = current_user.username
     producto, error = ProductoService.create_producto(data, usuario_creacion)
     
     if error:
@@ -176,8 +185,10 @@ def create_producto():
     return jsonify(producto), 201
 
 @productos_bp.route('/<int:id>', methods=['PUT'])
+@token_required
+@require_permission('Productos', 'update')
 @handle_exceptions(servicio='Productos', cod_mensaje=2004)
-def update_producto(id):
+def update_producto(current_user, id):
     """
     Actualizar producto existente
     ---
@@ -241,7 +252,7 @@ def update_producto(id):
     if not data:
         return jsonify({"error": "No se proporcionaron datos"}), 400
     
-    usuario_modificacion = request.headers.get('X-Usuario', 'sistema')
+    usuario_modificacion = current_user.username
     producto, error = ProductoService.update_producto(id, data, usuario_modificacion)
     
     if error:
@@ -252,8 +263,10 @@ def update_producto(id):
     return jsonify(producto), 200
 
 @productos_bp.route('/<int:id>', methods=['DELETE'])
+@token_required
+@require_permission('Productos', 'delete')
 @handle_exceptions(servicio='Productos', cod_mensaje=2005)
-def delete_producto(id):
+def delete_producto(current_user, id):
     """
     Eliminar producto
     ---
@@ -291,8 +304,10 @@ def delete_producto(id):
     return jsonify({"message": "Producto eliminado exitosamente"}), 200
 
 @productos_bp.route('/activos', methods=['GET'])
+@token_required
+@require_permission('Productos', 'read')
 @handle_exceptions(servicio='Productos', cod_mensaje=2006)
-def get_productos_activos():
+def get_productos_activos(current_user):
     """
     Obtener productos activos
     ---

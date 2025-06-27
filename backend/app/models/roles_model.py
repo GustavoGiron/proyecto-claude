@@ -13,6 +13,7 @@ class Role(db.Model):
     
     usuarios = db.relationship('Usuario', back_populates='role')
     role_modules = db.relationship('RoleModule', back_populates='role', cascade='all, delete-orphan')
+    role_permissions = db.relationship('RolePermission', back_populates='role', cascade='all, delete-orphan')
     
     def to_dict(self):
         return {

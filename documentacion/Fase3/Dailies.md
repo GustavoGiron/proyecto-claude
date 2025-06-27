@@ -33,9 +33,9 @@ Todas las grabaciones de los daily standups están disponibles en el siguiente e
 - **¿Tengo algún impedimento?**: no hay impedimentos
 
 ### Integrante 5 - Oscar Eduardo Morales Girón
-- **¿Qué hice ayer?**: 
-- **¿Qué haré hoy?**: 
-- **¿Tengo algún impedimento?**: 
+- **¿Qué hice ayer?**: Se agregó la busqueda por nombre de cliente en la vista registrar salida. 
+- **¿Qué haré hoy?**: Hoy empezare a trabajar en la vista del login para la aplicación.
+- **¿Tengo algún impedimento?**: Ninguno.
 
 ### Integrante 6 - Ediwn Sandoval Lopez
 - **¿Qué hice ayer?**: Estuve viendo las tablas a usar para la autentificacion y roles.
@@ -48,42 +48,43 @@ Todas las grabaciones de los daily standups están disponibles en el siguiente e
 
 ### Integrante 1 - Kevin Estuardo Secaida Molina
 - **¿Qué hice ayer?**: Asigne a los integrantes del equipo las tareas correspondientes para el sprint actual, asegurando que cada miembro tenga claro su rol y responsabilidades. Además, comencé el desarrollo de la funcionalidad para el envío de alertas de stock bajo por medio de correo.
-- **¿Qué haré hoy?**: 
-- **¿Tengo algún impedimento?**: 
+- **¿Qué haré hoy?**: Continuaré con el desarrollo de la funcionalidad de alertas de stock bajo y realizaré pruebas para asegurarme de que todo funcione correctamente.
+- **¿Tengo algún impedimento?**: Si, el impedimento es que no logro enviar correos a varios destinatarios, solo a uno. Estoy investigando cómo resolverlo.
 
 ### Integrante 2 - Pedro Luis Pu Tavico
-- **¿Qué hice ayer?**: 
-- **¿Qué haré hoy?**: 
-- **¿Tengo algún impedimento?**: 
+- **¿Qué hice ayer?**: Ayer realize cambios en la tabla de información general de ventas para mejorar su visualización y funcionalidad.
+- **¿Qué haré hoy?**: Realizaré cambios en el componente registrar pago ya que por el momento solo se hacen busquedas por numero de envio, agregare busquedas por nombre de cliente.
+- **¿Tengo algún impedimento?**: No, por el momento no tengo ningun impedimento.
 
 ### Integrante 3 - Carlos Raul Rangel Robelo
-- **¿Qué hice ayer?**: 
-- **¿Qué haré hoy?**: 
-- **¿Tengo algún impedimento?**: 
+- **¿Qué hice ayer?**: Se estuvieron revisando en distintos foros y documentaciones las configuraciones para el deploy.
+- **¿Qué haré hoy?**: Estare construyendo los archivos de yml deploy para el frontend y el backend.
+- **¿Tengo algún impedimento?**: No tengo impedimiento por ahora.
 
 ### Integrante 4 - Gustavo Alejandro Giron Arriola
-- **¿Qué hice ayer?**: 
-- **¿Qué haré hoy?**: 
-- **¿Tengo algún impedimento?**: 
+- **¿Qué hice ayer?**: Realice endpoins para poder obtener ventas por cliente, clientes por nombre y clientes por id
+- **¿Qué haré hoy?**: me reunire con mis compañeros para coordinar las validaciones y pruebas funcionales
+- **¿Tengo algún impedimento?**: no hay ningun impedimento
 
 ### Integrante 5 - Oscar Eduardo Morales Girón
-- **¿Qué hice ayer?**: 
-- **¿Qué haré hoy?**: 
-- **¿Tengo algún impedimento?**: 
+- **¿Qué hice ayer?**: Estuve trabajando en la vista login, realizando consultas al backend para validación de datos grantizando un acceso seguro y sin deficiencias de comunicación con el backend, asegurandome de que los accesos tengan los permisos necesarios.
+- **¿Qué haré hoy?**: Validare la eficiencia del login haciendo pruebas de acceso, agregare el boton logout y filtros para botones.
+- **¿Tengo algún impedimento?**: No.
 
 ### Integrante 6 - Ediwn Sandoval Lopez
-- **¿Qué hice ayer?**: 
-- **¿Qué haré hoy?**: 
-- **¿Tengo algún impedimento?**: 
+- **¿Qué hice ayer?**: Estuve viendo los models, migrations y seeders para la auth y roles.
+    Estuve viendo el login y las rutas para el auth y permisos.
+- **¿Qué haré hoy?**: Hoy voy a estar viendo las middlewares para proteger las rutas y la documentacion del api.
+- **¿Tengo algún impedimento?**: No.
 
 ---
 
 ## Daily 3 - 26/06/2025
 
 ### Integrante 1 - Kevin Estuardo Secaida Molina
-- **¿Qué hice ayer?**: 
-- **¿Qué haré hoy?**: 
-- **¿Tengo algún impedimento?**: 
+- **¿Qué hice ayer?**: Realice las pruebas para la funcionalidad de envío de alertas de stock bajo por correo, asegurando que los correos se envíen correctamente a los destinatarios, no obstante, aún estaba el inconveniente de que solo puedo enviar correos a un destinatario a la vez.
+- **¿Qué haré hoy?**: Solucionaré el inconveniente de envío de correos a múltiples destinatarios y continuaré con las pruebas unitarias de las funcionalidades implementadas.
+- **¿Tengo algún impedimento?**: No.
 
 ### Integrante 2 - Pedro Luis Pu Tavico
 - **¿Qué hice ayer?**: 
@@ -115,7 +116,7 @@ Todas las grabaciones de los daily standups están disponibles en el siguiente e
 ## Daily 4 - 27/06/2025
 
 ### Integrante 1 - Kevin Estuardo Secaida Molina
-- **¿Qué hice ayer?**: 
+- **¿Qué hice ayer?**: Solucioné el inconveniente de envío de correos a múltiples destinatarios, ahora puedo enviar alertas de stock bajo a varios correos electrónicos. Además, continué con las pruebas unitarias de las funcionalidades implementadas. 
 - **¿Qué haré hoy?**: 
 - **¿Tengo algún impedimento?**: 
 

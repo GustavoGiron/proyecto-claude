@@ -136,6 +136,14 @@ def get_user_permissions(current_user):
     
     return jsonify(permissions), 200
 
+def get_user_role(current_user):
+    role = auth_service.get_user_role(current_user.role_id)
+    
+    if not role:
+        return jsonify({'error': 'Rol no encontrado'}), 404
+    
+    return jsonify(role), 200
+
 
 @auth_bp.route('/logout', methods=['POST'])
 @swag_from({

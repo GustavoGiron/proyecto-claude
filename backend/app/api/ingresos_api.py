@@ -5,6 +5,7 @@ from app.dtos.ingresos_dto import (
     DetalleIngresoSchema, ConfirmarIngresoSchema
 )
 from app.utils.logger import handle_exceptions
+from app.utils.auth_middleware import token_required, require_permission
 
 ingresos_bp = Blueprint('ingresos_bp', __name__)
 
@@ -17,8 +18,10 @@ confirmar_schema = ConfirmarIngresoSchema()
 # ===== ENDPOINTS DE INGRESOS DE MERCANCÍA =====
 
 @ingresos_bp.route('/', methods=['GET'])
+@token_required
+@require_permission('Ingresos', 'read')
 @handle_exceptions(servicio='IngresosMercancia', cod_mensaje=7001)
-def get_ingresos():
+def get_ingresos(current_user):
     """
     Listar todos los ingresos de mercancía
     ---
@@ -69,8 +72,10 @@ def get_ingresos():
     return jsonify(ingresos), 200
 
 @ingresos_bp.route('/<int:ingreso_id>', methods=['GET'])
+@token_required
+@require_permission('Ingresos', 'read')
 @handle_exceptions(servicio='IngresosMercancia', cod_mensaje=7002)
-def get_ingreso_by_id(ingreso_id):
+def get_ingreso_by_id(current_user, ingreso_id):
     """
     Obtener ingreso de mercancía por ID con sus detalles
     ---
@@ -97,8 +102,10 @@ def get_ingreso_by_id(ingreso_id):
     return jsonify(ingreso), 200
 
 @ingresos_bp.route('/', methods=['POST'])
+@token_required
+@require_permission('Ingresos', 'create')
 @handle_exceptions(servicio='IngresosMercancia', cod_mensaje=7003)
-def create_ingreso():
+def create_ingreso(current_user):
     """
     Crear nuevo ingreso de mercancía con sus detalles
     ---
@@ -183,8 +190,10 @@ def create_ingreso():
     return jsonify(ingreso), 201
 
 @ingresos_bp.route('/<int:ingreso_id>', methods=['PUT'])
+@token_required
+@require_permission('Ingresos', 'update')
 @handle_exceptions(servicio='IngresosMercancia', cod_mensaje=7004)
-def update_ingreso(ingreso_id):
+def update_ingreso(current_user, ingreso_id):
     """
     Actualizar datos básicos del ingreso (sin detalles)
     ---
@@ -237,8 +246,10 @@ def update_ingreso(ingreso_id):
     return jsonify(ingreso), 200
 
 @ingresos_bp.route('/<int:ingreso_id>', methods=['DELETE'])
+@token_required
+@require_permission('Ingresos', 'delete')
 @handle_exceptions(servicio='IngresosMercancia', cod_mensaje=7005)
-def delete_ingreso(ingreso_id):
+def delete_ingreso(current_user, ingreso_id):
     """
     Eliminar ingreso de mercancía y sus detalles
     ---
@@ -263,8 +274,10 @@ def delete_ingreso(ingreso_id):
     return '', 204
 
 @ingresos_bp.route('/<int:ingreso_id>/confirmar', methods=['POST'])
+@token_required
+@require_permission('Ingresos', 'update')
 @handle_exceptions(servicio='IngresosMercancia', cod_mensaje=7006)
-def confirmar_ingreso(ingreso_id):
+def confirmar_ingreso(current_user, ingreso_id):
     """
     Confirmar ingreso y aplicar cantidades al inventario
     ---
@@ -313,8 +326,10 @@ def confirmar_ingreso(ingreso_id):
 # ===== ENDPOINTS DE DETALLES =====
 
 @ingresos_bp.route('/<int:ingreso_id>/detalles', methods=['GET'])
+@token_required
+@require_permission('Ingresos', 'read')
 @handle_exceptions(servicio='IngresosMercancia', cod_mensaje=7007)
-def get_detalles_ingreso(ingreso_id):
+def get_detalles_ingreso(current_user, ingreso_id):
     """
     Obtener detalles de un ingreso específico
     ---
@@ -338,8 +353,10 @@ def get_detalles_ingreso(ingreso_id):
     return jsonify(detalles), 200
 
 @ingresos_bp.route('/<int:ingreso_id>/detalles', methods=['POST'])
+@token_required
+@require_permission('Ingresos', 'create')
 @handle_exceptions(servicio='IngresosMercancia', cod_mensaje=7008)
-def add_detalle_to_ingreso(ingreso_id):
+def add_detalle_to_ingreso(current_user, ingreso_id):
     """
     Agregar detalle a un ingreso existente
     ---
@@ -389,8 +406,10 @@ def add_detalle_to_ingreso(ingreso_id):
     return jsonify(detalle), 201
 
 @ingresos_bp.route('/<int:ingreso_id>/totales', methods=['GET'])
+@token_required
+@require_permission('Ingresos', 'read')
 @handle_exceptions(servicio='IngresosMercancia', cod_mensaje=7009)
-def get_totales_ingreso(ingreso_id):
+def get_totales_ingreso(current_user, ingreso_id):
     """
     Obtener totales calculados del ingreso
     ---
@@ -423,8 +442,10 @@ def get_totales_ingreso(ingreso_id):
     return jsonify(totales), 200
 
 @ingresos_bp.route('/detalles/<int:detalle_id>', methods=['PUT'])
+@token_required
+@require_permission('Ingresos', 'update')
 @handle_exceptions(servicio='IngresosMercancia', cod_mensaje=7010)
-def update_detalle(detalle_id):
+def update_detalle(current_user, detalle_id):
     """
     Actualizar un detalle específico
     ---
@@ -462,8 +483,10 @@ def update_detalle(detalle_id):
     return jsonify(detalle), 200
 
 @ingresos_bp.route('/detalles/<int:detalle_id>', methods=['DELETE'])
+@token_required
+@require_permission('Ingresos', 'delete')
 @handle_exceptions(servicio='IngresosMercancia', cod_mensaje=7011)
-def delete_detalle(detalle_id):
+def delete_detalle(current_user, detalle_id):
     """
     Eliminar un detalle específico
     ---

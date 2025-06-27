@@ -1,4 +1,4 @@
-from app import db
+from app.database import db
 from app.models.logs_model import Log
 
 class LogRepo:

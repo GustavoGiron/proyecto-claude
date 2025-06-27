@@ -5,12 +5,11 @@ from app.repositories.logs_repo import LogRepo
 def log_info(service: str, action: str, message: str, user: str = None):
     """Log info level message"""
     try:
-        LogRepo.create_log(
+        LogRepo.add(
+            funcion=action,
+            cod_mensaje=200,  # Success code for info
             servicio=service,
-            accion=action,
-            mensaje=message,
-            tipo='INFO',
-            usuario=user
+            descripcion=f"[INFO] {message}"
         )
     except Exception as e:
         print(f"Error logging info: {e}")
@@ -18,12 +17,11 @@ def log_info(service: str, action: str, message: str, user: str = None):
 def log_error(service: str, action: str, message: str, user: str = None):
     """Log error level message"""
     try:
-        LogRepo.create_log(
+        LogRepo.add(
+            funcion=action,
+            cod_mensaje=500,  # Error code
             servicio=service,
-            accion=action,
-            mensaje=message,
-            tipo='ERROR',
-            usuario=user
+            descripcion=f"[ERROR] {message}"
         )
     except Exception as e:
         print(f"Error logging error: {e}")

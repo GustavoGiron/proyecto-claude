@@ -7,7 +7,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
         <!-- Ingreso de inventario -->
-        <div
+        <div *ngIf="hasPermission('Ingresos', 'create')"
             class="bg-white rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
             <div class="p-8 text-center">
                 <div class="mb-6">
@@ -22,7 +22,7 @@
         </div>
 
         <!-- Ver inventario -->
-        <div
+        <div *ngIf="hasPermission('Inventario', 'read')"
             class="bg-white rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
             <div class="p-8 text-center">
                 <div class="mb-6">
@@ -37,7 +37,7 @@
         </div>
 
         <!-- Registro de venta -->
-        <div
+        <div *ngIf="hasPermission('Ventas', 'create')"
             class="bg-white rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
             <div class="p-8 text-center">
                 <div class="mb-6">
@@ -52,7 +52,7 @@
         </div>
 
         <!-- Registrar salida -->
-        <div
+        <div *ngIf="hasPermission('Salidas', 'create')"
             class="bg-white rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
             <div class="p-8 text-center">
                 <div class="mb-6">
@@ -67,7 +67,7 @@
         </div>
 
         <!-- Registrar pago -->
-        <div
+        <div *ngIf="hasPermission('Pagos', 'create')"
             class="bg-white rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
             <div class="p-8 text-center">
                 <div class="mb-6">

@@ -9,3 +9,6 @@ flask-cors
 cryptography
 PyJWT
 bcrypt
+gunicorn
+pytest
+pytest-mock

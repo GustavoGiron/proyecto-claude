@@ -2,13 +2,16 @@
 from flask import Blueprint, jsonify, request
 from app.services.inventario_service import InventarioService, IngresoMercanciaService
 from app.utils.logger import handle_exceptions
+from app.utils.auth_middleware import token_required, require_permission
 
 inventario_bp = Blueprint('inventario_bp', __name__)
 
 # INVENTARIO ENDPOINTS
 @inventario_bp.route('/', methods=['GET'])
+@token_required
+@require_permission('Inventario', 'read')
 @handle_exceptions(servicio='Inventario', cod_mensaje=3001)
-def get_inventarios():
+def get_inventarios(current_user):
     """
     Listar inventarios
     ---
@@ -26,8 +29,10 @@ def get_inventarios():
     return jsonify(inventarios), 200
 
 @inventario_bp.route('/<int:id>', methods=['GET'])
+@token_required
+@require_permission('Inventario', 'read')
 @handle_exceptions(servicio='Inventario', cod_mensaje=3002)
-def get_inventario(id):
+def get_inventario(current_user, id):
     """
     Obtener inventario por ID
     ---
@@ -53,8 +58,10 @@ def get_inventario(id):
     return jsonify(inventario), 200
 
 @inventario_bp.route('/producto/<int:producto_id>', methods=['GET'])
+@token_required
+@require_permission('Inventario', 'read')
 @handle_exceptions(servicio='Inventario', cod_mensaje=3002)
-def get_inventario_by_producto(producto_id):
+def get_inventario_by_producto(current_user, producto_id):
     """
     Obtener inventario por ID de producto
     ---
@@ -80,8 +87,10 @@ def get_inventario_by_producto(producto_id):
     return jsonify(inventario), 200
 
 @inventario_bp.route('/', methods=['POST'])
+@token_required
+@require_permission('Inventario', 'create')
 @handle_exceptions(servicio='Inventario', cod_mensaje=3003)
-def create_inventario():
+def create_inventario(current_user):
     """
     Crear inventario
     ---
@@ -119,7 +128,7 @@ def create_inventario():
     if not data:
         return jsonify({"error": "No se proporcionaron datos"}), 400
     
-    usuario_creacion = request.headers.get('X-Usuario', 'sistema')
+    usuario_creacion = current_user.username
     inventario, error = InventarioService.create_inventario(data, usuario_creacion)
     
     if error:
@@ -128,8 +137,10 @@ def create_inventario():
     return jsonify(inventario), 201
 
 @inventario_bp.route('/<int:id>', methods=['PUT'])
+@token_required
+@require_permission('Inventario', 'update')
 @handle_exceptions(servicio='Inventario', cod_mensaje=3004)
-def update_inventario(id):
+def update_inventario(current_user, id):
     """
     Actualizar inventario
     ---
@@ -164,7 +175,7 @@ def update_inventario(id):
     if not data:
         return jsonify({"error": "No se proporcionaron datos"}), 400
     
-    usuario_modificacion = request.headers.get('X-Usuario', 'sistema')
+    usuario_modificacion = current_user.username
     inventario, error = InventarioService.update_inventario(id, data, usuario_modificacion)
     
     if error:
@@ -175,8 +186,10 @@ def update_inventario(id):
     return jsonify(inventario), 200
 
 @inventario_bp.route('/<int:id>', methods=['DELETE'])
+@token_required
+@require_permission('Inventario', 'delete')
 @handle_exceptions(servicio='Inventario', cod_mensaje=3005)
-def delete_inventario(id):
+def delete_inventario(current_user, id):
     """
     Eliminar inventario
     ---
@@ -204,8 +217,10 @@ def delete_inventario(id):
     return jsonify({"message": "Inventario eliminado exitosamente"}), 200
 
 @inventario_bp.route('/stock-bajo-minimo', methods=['GET'])
+@token_required
+@require_permission('Inventario', 'read')
 @handle_exceptions(servicio='Inventario', cod_mensaje=3006)
-def get_stock_bajo_minimo():
+def get_stock_bajo_minimo(current_user):
     """
     Obtener productos con stock bajo mínimo
     ---
@@ -224,8 +239,10 @@ def get_stock_bajo_minimo():
 
 # MOVIMIENTOS DE INVENTARIO ENDPOINTS
 @inventario_bp.route('/movimientos', methods=['GET'])
+@token_required
+@require_permission('Inventario', 'read')
 @handle_exceptions(servicio='Inventario', cod_mensaje=3007)
-def get_movimientos():
+def get_movimientos(current_user):
     """
     Listar movimientos de inventario
     ---
@@ -279,8 +296,10 @@ def get_movimientos():
     return jsonify(movimientos), 200
 
 @inventario_bp.route('/movimientos', methods=['POST'])
+@token_required
+@require_permission('Inventario', 'create')
 @handle_exceptions(servicio='Inventario', cod_mensaje=3008)
-def create_movimiento():
+def create_movimiento(current_user):
     """
     Registrar movimiento de inventario
     ---
@@ -330,7 +349,7 @@ def create_movimiento():
         if not data.get(field):
             return jsonify({"error": f"Campo requerido: {field}"}), 400
     
-    usuario = request.headers.get('X-Usuario', 'sistema')
+    usuario = current_user.username
     
     movimiento, error = InventarioService.registrar_movimiento_inventario(
         data['producto_id'],
@@ -348,8 +367,10 @@ def create_movimiento():
 
 # INGRESOS DE MERCANCIA ENDPOINTS
 @inventario_bp.route('/ingresos', methods=['GET'])
+@token_required
+@require_permission('Ingresos', 'read')
 @handle_exceptions(servicio='Inventario', cod_mensaje=3009)
-def get_ingresos():
+def get_ingresos(current_user):
     """
     Listar ingresos de mercancía
     ---
@@ -367,8 +388,10 @@ def get_ingresos():
     return jsonify(ingresos), 200
 
 @inventario_bp.route('/ingresos/<int:id>', methods=['GET'])
+@token_required
+@require_permission('Ingresos', 'read')
 @handle_exceptions(servicio='Inventario', cod_mensaje=3010)
-def get_ingreso(id):
+def get_ingreso(current_user, id):
     """
     Obtener ingreso de mercancía por ID
     ---
@@ -394,8 +417,10 @@ def get_ingreso(id):
     return jsonify(ingreso), 200
 
 @inventario_bp.route('/ingresos', methods=['POST'])
+@token_required
+@require_permission('Ingresos', 'create')
 @handle_exceptions(servicio='Inventario', cod_mensaje=3011)
-def create_ingreso():
+def create_ingreso(current_user):
     """
     Crear ingreso de mercancía
     ---
@@ -442,7 +467,7 @@ def create_ingreso():
     if not data:
         return jsonify({"error": "No se proporcionaron datos"}), 400
     
-    usuario_creacion = request.headers.get('X-Usuario', 'sistema')
+    usuario_creacion = current_user.username
     
     # Extraer detalles si vienen en el request
     detalles = data.pop('detalles', None)
@@ -471,8 +496,10 @@ def create_ingreso():
     return jsonify(ingreso_completo), 201
 
 @inventario_bp.route('/ingresos/<int:id>', methods=['PUT'])
+@token_required
+@require_permission('Ingresos', 'update')
 @handle_exceptions(servicio='Inventario', cod_mensaje=3012)
-def update_ingreso(id):
+def update_ingreso(current_user, id):
     """
     Actualizar ingreso de mercancía
     ---
@@ -527,8 +554,10 @@ def update_ingreso(id):
     return jsonify(ingreso), 200
 
 @inventario_bp.route('/ingresos/<int:id>', methods=['DELETE'])
+@token_required
+@require_permission('Ingresos', 'delete')
 @handle_exceptions(servicio='Inventario', cod_mensaje=3013)
-def delete_ingreso(id):
+def delete_ingreso(current_user, id):
     """
     Eliminar ingreso de mercancía
     ---
@@ -555,8 +584,10 @@ def delete_ingreso(id):
     return jsonify({"message": "Ingreso eliminado exitosamente"}), 200
 
 @inventario_bp.route('/ingresos/<int:ingreso_id>/detalles', methods=['POST'])
+@token_required
+@require_permission('Ingresos', 'create')
 @handle_exceptions(servicio='Inventario', cod_mensaje=3014)
-def add_detalle_ingreso(ingreso_id):
+def add_detalle_ingreso(current_user, ingreso_id):
     """
     Agregar detalle a ingreso de mercancía
     ---
@@ -595,7 +626,7 @@ def add_detalle_ingreso(ingreso_id):
     if not data:
         return jsonify({"error": "No se proporcionaron datos"}), 400
     
-    usuario_creacion = request.headers.get('X-Usuario', 'sistema')
+    usuario_creacion = current_user.username
     detalle, error = IngresoMercanciaService.add_detalle_ingreso(ingreso_id, data, usuario_creacion)
     
     if error:

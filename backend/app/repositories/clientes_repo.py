@@ -13,6 +13,30 @@ class ClienteRepo:
     @staticmethod
     def get_by_codigo(codigo):
         return Cliente.query.filter_by(codigo_cliente=codigo).first()
+    
+    @staticmethod
+    def get_by_nombre_contacto(nombre_contacto):
+        return Cliente.query.filter(
+            Cliente.nombre_contacto.ilike(f'%{nombre_contacto}%')
+        ).all()
+    
+    @staticmethod
+    def search(nombre_contacto=None, nombre_negocio=None, codigo_cliente=None, nit=None):
+        query = Cliente.query
+        
+        if nombre_contacto:
+            query = query.filter(Cliente.nombre_contacto.ilike(f'%{nombre_contacto}%'))
+        
+        if nombre_negocio:
+            query = query.filter(Cliente.nombre_negocio.ilike(f'%{nombre_negocio}%'))
+            
+        if codigo_cliente:
+            query = query.filter(Cliente.codigo_cliente.ilike(f'%{codigo_cliente}%'))
+            
+        if nit:
+            query = query.filter(Cliente.nit.ilike(f'%{nit}%'))
+        
+        return query.all()
 
     @staticmethod
     def add(data: dict):

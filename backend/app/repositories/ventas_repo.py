@@ -116,6 +116,19 @@ class VentaRepo:
                     continue
         
         return max_num
+    
+    @staticmethod
+    def get_by_cliente_id(cliente_id):
+        """Obtener todas las ventas de un cliente específico"""
+        return Venta.query.filter_by(cliente_id=cliente_id).order_by(desc(Venta.fecha_venta)).all()
+    
+    @staticmethod
+    def get_by_cliente_id_with_details(cliente_id):
+        """Obtener ventas de un cliente con información detallada"""
+        return Venta.query.filter_by(cliente_id=cliente_id)\
+                          .join(Venta.cliente)\
+                          .join(Venta.vendedor)\
+                          .order_by(desc(Venta.fecha_venta)).all()
 
 class DetalleVentaRepo:
     @staticmethod

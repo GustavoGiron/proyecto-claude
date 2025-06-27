@@ -3,24 +3,33 @@
 import os
 from flask import Flask, jsonify
 from flasgger import Swagger
-from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_cors import CORS
 
 from .config import Config
 from .utils.validators import ValidationError
 from .utils.emailalert import enviar_alerta_stock_bajo
+from .database import db
 
 # Instancias singleton
-db = SQLAlchemy()
 ma = Marshmallow()
 
-def create_app():
+def create_app(testing=False):
     app = Flask(__name__)
-    app.config.from_object(Config)
+
+    if testing:
+        app.config['TESTING'] = True
+        app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('TEST_DATABASE_URI')
+        app.config['WTF_CSRF_ENABLED'] = False  
+    else:  
+        app.config.from_object(Config)
+
+    
+    app.config['ENV']   = os.getenv('FLASK_ENV', 'production')
+    app.config['DEBUG'] = os.getenv('FLASK_DEBUG', 'false').lower() == 'true'
 
     # Configurar CORS
-    CORS(app, origins=['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:4200', 'http://127.0.0.1:4200'], 
+    CORS(app, origins=['*'],
          methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
          allow_headers=['Content-Type', 'Authorization'])
 
@@ -39,7 +48,7 @@ def create_app():
             "description": "Documentación automática con Swagger"
         },
         # Evitamos doble slash en las rutas de Swagger UI
-        "host":     "127.0.0.1:5000",
+        "host":     os.getenv("SWAGGER_HOST", "localhost"),
         "basePath": "",
         "schemes":  ["http"],
         "definitions": {
@@ -243,11 +252,3 @@ def create_app():
     app.register_blueprint(ingresos_bp,      url_prefix='/api/ingresos')
 
     return app
-
-# Entry point
-from app import create_app
-app = create_app()
-
-if __name__ == "__main__":
-    # Asumimos que las migraciones ya crearon las tablas
-    app.run(debug=True, port=5000)

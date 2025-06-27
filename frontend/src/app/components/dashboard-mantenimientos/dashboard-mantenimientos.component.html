@@ -6,7 +6,7 @@
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <!-- Clientes -->
-        <div
+        <div *ngIf="hasPermission('Clientes', 'read')"
             class="bg-white rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
             <div class="p-8 text-center">
                 <div class="mb-6">
@@ -21,7 +21,7 @@
         </div>
 
         <!-- Productos -->
-        <div
+        <div *ngIf="hasPermission('Productos', 'read')"
             class="bg-white rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
             <div class="p-8 text-center">
                 <div class="mb-6">
@@ -36,7 +36,7 @@
         </div>
 
         <!-- Vendedores -->
-        <div
+        <div *ngIf="hasPermission('Vendedores', 'read')"
             class="bg-white rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
             <div class="p-8 text-center">
                 <div class="mb-6">

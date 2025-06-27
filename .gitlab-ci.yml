@@ -1,82 +1,71 @@
 stages:
   - build
-  - push
   - deploy
 
 variables:
   DOCKER_DRIVER: overlay2
-  DOCKER_TLS_CERTDIR: "/certs"
 
-before_script:
-  - echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-
-build_backend:
+build:
   stage: build
   image: docker:latest
   services:
     - docker:dind
-  script:
-    - docker build -t $DOCKERHUB_USERNAME/ayd2-backend:$CI_COMMIT_SHA ./backend
-    - docker tag $DOCKERHUB_USERNAME/ayd2-backend:$CI_COMMIT_SHA $DOCKERHUB_USERNAME/ayd2-backend:latest
   only:
     - develop
-
-build_frontend:
-  stage: build
-  image: docker:latest
-  services:
-    - docker:dind
+  before_script:
+    - echo "Iniciando build..."
+    - docker info
   script:
-    - docker build -t $DOCKERHUB_USERNAME/ayd2-frontend:$CI_COMMIT_SHA ./frontend
-    - docker tag $DOCKERHUB_USERNAME/ayd2-frontend:$CI_COMMIT_SHA $DOCKERHUB_USERNAME/ayd2-frontend:latest
-  only:
-    - develop
+    - docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_PASSWORD"
+    - docker build --no-cache -t ayd2g5/prueba:backend ./backend
+    - docker build --no-cache -t ayd2g5/prueba:frontend ./frontend
+    - docker push ayd2g5/prueba:backend
+    - docker push ayd2g5/prueba:frontend
+  after_script:
+    - docker logout
 
-push_backend:
-  stage: push
-  image: docker:latest
-  services:
-    - docker:dind
-  script:
-    - docker push $DOCKERHUB_USERNAME/ayd2-backend:$CI_COMMIT_SHA
-    - docker push $DOCKERHUB_USERNAME/ayd2-backend:latest
-  needs: [build_backend]
-  only:
-    - develop
-
-push_frontend:
-  stage: push
-  image: docker:latest
-  services:
-    - docker:dind
-  script:
-    - docker push $DOCKERHUB_USERNAME/ayd2-frontend:$CI_COMMIT_SHA
-    - docker push $DOCKERHUB_USERNAME/ayd2-frontend:latest
-  needs: [build_frontend]
-  only:
-    - develop
-
-deploy_to_kubernetes:
+deploy:
   stage: deploy
-  image:
-    name: bitnami/kubectl:latest
-    entrypoint: [""]
-  script:
-    - kubectl config set-cluster gke_cluster --server=$KUBE_API_SERVER --insecure-skip-tls-verify=true
-    - kubectl config set-credentials deployer --token=$KUBE_TOKEN
-    - kubectl config set-context default --cluster=gke_cluster --user=deployer --namespace=default
-    - kubectl config use-context default
-    - sed -i "s|tu_usuario_dockerhub|$DOCKERHUB_USERNAME|g" k8s/backend-deployment.yaml
-    - sed -i "s|tu_usuario_dockerhub|$DOCKERHUB_USERNAME|g" k8s/frontend-deployment.yaml
-    - kubectl apply -f k8s/backend-configmap.yml
-    - kubectl apply -f k8s/frontend-configmap.yaml
-    - kubectl apply -f k8s/backend-deployment.yaml
-    - kubectl apply -f k8s/frontend-deployment.yaml
-    - kubectl apply -f k8s/ingress.yml
-    - kubectl rollout restart deployment/backend
-    - kubectl rollout restart deployment/frontend
-    - kubectl rollout status deployment/backend
-    - kubectl rollout status deployment/frontend
+  image: google/cloud-sdk:alpine
   only:
     - develop
-  needs: [push_backend, push_frontend]
+  before_script:
+    # Instalar kubectl si no está disponible
+    - apk add --no-cache curl
+    - gcloud components install kubectl
+  script:
+    # Autenticación en GCP
+    - echo $GCLOUD_SERVICE_KEY | base64 -d > ${CI_PROJECT_DIR}/gcloud-service-key.json
+    - gcloud auth activate-service-account --key-file=${CI_PROJECT_DIR}/gcloud-service-key.json
+    - gcloud config set project $PROJECT_ID
+
+    # Verificar variables requeridas
+    - |
+      if [ -z "$PROJECT_ID" ] || [ -z "$CLUSTER_NAME" ] || [ -z "$CLUSTER_ZONE" ]; then
+        echo "Error: Variables de entorno requeridas no están definidas"
+        exit 1
+      fi
+
+    # Conectar al cluster
+    - gcloud container clusters get-credentials $CLUSTER_NAME --zone $CLUSTER_ZONE
+
+    # Verificar conexión
+    - kubectl cluster-info
+
+    # Aplicar deployments
+    - kubectl apply -f backend-deployment.yaml
+    - kubectl apply -f frontend-deployment.yaml
+
+    # Forzar el redeploy para que tomen la nueva imagen aunque el tag sea igual
+    - kubectl rollout restart deployment/backend-deployment
+    - kubectl rollout restart deployment/frontend  # ⚠️ CAMBIO AQUÍ - Quitamos "-deployment"
+
+    # Verificar el estado del deployment
+    - kubectl rollout status deployment/backend-deployment
+    - kubectl rollout status deployment/frontend  # ⚠️ CAMBIO AQUÍ - Quitamos "-deployment"
+
+    # Mostrar pods en ejecución
+    - kubectl get pods -o wide
+  after_script:
+    # Limpiar archivo de credenciales
+    - rm -f ${CI_PROJECT_DIR}/gcloud-service-key.json

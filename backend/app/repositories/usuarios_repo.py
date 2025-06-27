@@ -9,28 +9,32 @@ class UsuariosRepository:
         try:
             return Usuario.query.all()
         except Exception as e:
-            log_error(f"Error al obtener usuarios: {str(e)}")
+            log_error("usuarios", "get_all", f"Error al obtener usuarios: {str(e)}")
             return []
     
     def get_by_id(self, usuario_id):
         try:
             return Usuario.query.get(usuario_id)
         except Exception as e:
-            log_error(f"Error al obtener usuario por ID: {str(e)}")
+            log_error("usuarios", "get_by_id", f"Error al obtener usuario por ID: {str(e)}")
             return None
-    
-    def get_by_username(self, username):
+
+    def get_by_role_id(self, role_id):
         try:
-            return Usuario.query.filter_by(username=username).first()
+            usuarios = Usuario.query.filter_by(role_id=role_id, is_active=True).all()
+            return usuarios
         except Exception as e:
-            log_error(f"Error al obtener usuario por username: {str(e)}")
-            return None
-    
+            log_error("usuarios", "get_by_role_id", f"Error al obtener usuarios por rol: {str(e)}")
+            return []     
+   
+    def get_by_username(self, username):
+        return Usuario.query.filter_by(username=username).first()
+
     def get_by_email(self, email):
         try:
             return Usuario.query.filter_by(email=email).first()
         except Exception as e:
-            log_error(f"Error al obtener usuario por email: {str(e)}")
+            log_error("usuarios", "get_by_email", f"Error al obtener usuario por email: {str(e)}")
             return None
     
     def create(self, data):
@@ -47,12 +51,12 @@ class UsuariosRepository:
             db.session.add(usuario)
             db.session.commit()
             
-            log_info(f"Usuario creado: {usuario.username}")
+            log_info("usuarios", "create", f"Usuario creado: {usuario.username}")
             return usuario
             
         except Exception as e:
             db.session.rollback()
-            log_error(f"Error al crear usuario: {str(e)}")
+            log_error("usuarios", "create", f"Error al crear usuario: {str(e)}")
             return None
     
     def update(self, usuario_id, data):
@@ -75,12 +79,12 @@ class UsuariosRepository:
                 usuario.set_password(data['password'])
             
             db.session.commit()
-            log_info(f"Usuario actualizado: {usuario.username}")
+            log_info("usuarios", "update", f"Usuario actualizado: {usuario.username}")
             return usuario
             
         except Exception as e:
             db.session.rollback()
-            log_error(f"Error al actualizar usuario: {str(e)}")
+            log_error("usuarios", "update", f"Error al actualizar usuario: {str(e)}")
             return None
     
     def delete(self, usuario_id):
@@ -92,12 +96,12 @@ class UsuariosRepository:
             usuario.is_active = False
             db.session.commit()
             
-            log_info(f"Usuario desactivado: {usuario.username}")
+            log_info("usuarios", "delete", f"Usuario desactivado: {usuario.username}")
             return True
             
         except Exception as e:
             db.session.rollback()
-            log_error(f"Error al desactivar usuario: {str(e)}")
+            log_error("usuarios", "delete", f"Error al desactivar usuario: {str(e)}")
             return False
     
     def update_last_login(self, usuario_id):
@@ -110,7 +114,7 @@ class UsuariosRepository:
             return False
         except Exception as e:
             db.session.rollback()
-            log_error(f"Error al actualizar última sesión: {str(e)}")
+            log_error("usuarios", "update_last_login", f"Error al actualizar última sesión: {str(e)}")
             return False
     
     def get_user_permissions(self, usuario_id):
@@ -149,5 +153,21 @@ class UsuariosRepository:
             return unique_permissions
             
         except Exception as e:
-            log_error(f"Error al obtener permisos del usuario: {str(e)}")
+            log_error("usuarios", "get_user_permissions", f"Error al obtener permisos del usuario: {str(e)}")
             return []
+        
+
+    def get_user_role(self, role_id):
+        try:
+            usuario = self.get_by_role_id(role_id)
+            if usuario and usuario.role:
+                return {
+                    'id': usuario.role.id,
+                    'nombre': usuario.role.nombre,
+                    'email': usuario.email,
+                    'descripcion': usuario.role.descripcion
+                }
+            return None
+        except Exception as e:
+            log_error("usuarios", "get_user_role", f"Error al obtener rol del usuario: {str(e)}")
+            return None

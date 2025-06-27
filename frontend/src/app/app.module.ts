@@ -1,9 +1,11 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { FormsModule } from '@angular/forms';
+
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
@@ -21,6 +23,8 @@ import { ListaInventarioComponent } from './components/lista-inventario/lista-in
 import { FormVentaComponent } from './components/form-venta/form-venta.component';
 import { RegistrarSalidaComponent } from './components/registrar-salida/registrar-salida.component';
 import { RegistrarPagoComponent } from './components/registrar-pago/registrar-pago.component';
+import { LoginComponent } from './components/login/login.component';
+import { LayoutComponent } from './components/layout/layout.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +44,8 @@ import { RegistrarPagoComponent } from './components/registrar-pago/registrar-pa
     FormVentaComponent,
     RegistrarSalidaComponent,
     RegistrarPagoComponent,
+    LoginComponent,
+    LayoutComponent,
   ],
   imports: [
     BrowserModule,
@@ -48,7 +54,13 @@ import { RegistrarPagoComponent } from './components/registrar-pago/registrar-pa
     HttpClientModule,
     FormsModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

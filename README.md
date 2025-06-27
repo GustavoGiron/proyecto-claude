@@ -41,3 +41,6 @@
 2. [Sprint Planning](./documentacion/Fase3/sprintPlanning.md)
 3. [Sprint Retrospective](./documentacion/Fase3/sprintRetrospective.md)
 4. [Backlog](./documentacion/Fase3/backlog.md)
+5. [Pruebas unitarias](./documentacion/Fase3/PruebasUnitarias.md)
+6. [Pruebas de integración](./documentacion/Fase3/PruebasIntegracion.md)
+7. [Pruebas de aceptación](./documentacion/Fase3/PruebasAceptacion.md)

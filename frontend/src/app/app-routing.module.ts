@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { NavbarComponent } from './components/navbar/navbar.component';
+import { AuthGuard } from './guards/auth.guard';
+import { LoginComponent } from './components/login/login.component';
+import { LayoutComponent } from './components/layout/layout.component';
 import { DashboardInicioComponent } from './components/dashboard-inicio/dashboard-inicio.component';
 import { DashboardMantenimientosComponent } from './components/dashboard-mantenimientos/dashboard-mantenimientos.component';
 import { DashboardProcesosComponent } from './components/dashboard-procesos/dashboard-procesos.component';
@@ -17,25 +19,48 @@ import { RegistrarSalidaComponent } from './components/registrar-salida/registra
 import { RegistrarPagoComponent } from './components/registrar-pago/registrar-pago.component';
 
 const routes: Routes = [
-  { path: 'navbar', component: NavbarComponent },
-  { path: 'dashboard-inicio', component: DashboardInicioComponent },
-  { path: 'dashboard-mantenimientos', component: DashboardMantenimientosComponent },
-  { path: 'dashboard-procesos', component: DashboardProcesosComponent },
-  { path: 'formulario-cliente', component: FormClienteComponent },
-  { path: 'formulario-cliente/:modo/:id', component: FormClienteComponent },
-  { path: 'lista-cliente', component: ListClienteComponent },
-  { path: 'formulario-vendedor', component: FormVendedorComponent },
-  { path: 'formulario-vendedor/:modo/:id', component: FormVendedorComponent },
-  { path: 'lista-vendedor', component: ListVendedorComponent },
-  { path: 'formulario-producto', component: FormProductoComponent },
-  { path: 'formulario-producto/:modo/:id', component: FormProductoComponent },
-  { path: 'lista-producto', component: ListProductoComponent },
-  { path: 'ingreso-inventario', component: FormInventarioComponent },
-  { path: 'lista-inventario', component: ListaInventarioComponent },
-  { path: 'registro-venta', component: FormVentaComponent },
-  { path: 'registrar-salida', component: RegistrarSalidaComponent },
-  { path: 'registrar-pago', component: RegistrarPagoComponent },
-  { path: '', redirectTo: '/dashboard-inicio', pathMatch: 'full' }
+  // Ruta pública para login
+  { path: 'login', component: LoginComponent },
+  
+  // Rutas protegidas con layout
+  {
+    path: '',
+    component: LayoutComponent,
+    canActivate: [AuthGuard],
+    children: [
+      { path: 'dashboard', component: DashboardInicioComponent },
+      { path: 'dashboard-inicio', component: DashboardInicioComponent },
+      { path: 'dashboard-mantenimientos', component: DashboardMantenimientosComponent },
+      { path: 'dashboard-procesos', component: DashboardProcesosComponent },
+      { path: 'formulario-cliente', component: FormClienteComponent },
+      { path: 'formulario-cliente/:modo/:id', component: FormClienteComponent },
+      { path: 'lista-cliente', component: ListClienteComponent },
+      { path: 'clientes', component: ListClienteComponent },
+      { path: 'formulario-vendedor', component: FormVendedorComponent },
+      { path: 'formulario-vendedor/:modo/:id', component: FormVendedorComponent },
+      { path: 'lista-vendedor', component: ListVendedorComponent },
+      { path: 'vendedores', component: ListVendedorComponent },
+      { path: 'formulario-producto', component: FormProductoComponent },
+      { path: 'formulario-producto/:modo/:id', component: FormProductoComponent },
+      { path: 'lista-producto', component: ListProductoComponent },
+      { path: 'productos', component: ListProductoComponent },
+      { path: 'ingreso-inventario', component: FormInventarioComponent },
+      { path: 'lista-inventario', component: ListaInventarioComponent },
+      { path: 'inventario', component: ListaInventarioComponent },
+      { path: 'registro-venta', component: FormVentaComponent },
+      { path: 'ventas', component: FormVentaComponent },
+      { path: 'registrar-salida', component: RegistrarSalidaComponent },
+      { path: 'salidas', component: RegistrarSalidaComponent },
+      { path: 'registrar-pago', component: RegistrarPagoComponent },
+      { path: 'pagos', component: RegistrarPagoComponent },
+      
+      // Redirección por defecto dentro del layout
+      { path: '', redirectTo: '/dashboard', pathMatch: 'full' }
+    ]
+  },
+  
+  // Catch-all redirect
+  { path: '**', redirectTo: '/dashboard' }
 ];
 
 @NgModule({

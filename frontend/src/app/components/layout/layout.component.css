@@ -1,0 +1,5 @@
+.main-content {
+  margin-top: 60px; /* Ajustar según la altura del navbar */
+  padding: 20px;
+  min-height: calc(100vh - 60px);
+}

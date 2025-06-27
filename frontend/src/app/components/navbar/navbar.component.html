@@ -4,7 +4,7 @@
             <a routerLink="/">
                 <h1 class="text-2xl font-bold text-gray-900">IMPORCOMGUA</h1>
             </a>
-            <nav class="flex space-x-8">
+            <nav class="flex space-x-8 items-center">
                 <a routerLink="/dashboard-mantenimientos" routerLinkActive="bg-gray-200 text-blue-600"
                     class="text-gray-700 hover:text-blue-600 px-4 py-2 rounded-lg transition-colors font-medium">
                     Mantenimientos
@@ -13,6 +13,13 @@
                     class="text-gray-700 hover:text-blue-600 px-4 py-2 rounded-lg transition-colors font-medium">
                     Procesos
                 </a>
+                <div *ngIf="currentUser" class="flex items-center space-x-4">
+                    <span class="text-gray-700 font-medium">{{ getUserDisplayName() }}</span>
+                    <button (click)="logout()" 
+                            class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors font-medium">
+                        Cerrar Sesión
+                    </button>
+                </div>
             </nav>
         </div>
     </div>

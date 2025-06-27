@@ -359,6 +359,85 @@ class VentaService:
             return None, error
         
         return VentaService.get_venta_by_id(venta_id), None
+    
+        
+    @staticmethod
+    def get_ventas_by_cliente_id(cliente_id):
+        """Obtener todas las ventas de un cliente específico"""
+        from app.repositories.clientes_repo import ClienteRepo
+        
+        # Verificar que el cliente existe
+        cliente = ClienteRepo.get(cliente_id)
+        if not cliente:
+            return None, "Cliente no encontrado"
+        
+        ventas = VentaRepo.get_by_cliente_id(cliente_id)
+        ventas_con_detalles = []
+        
+        for venta in ventas:
+            venta_dict = venta.to_dict()
+            
+            # Agregar información del cliente
+            venta_dict['cliente'] = {
+                'id': cliente.id,
+                'codigo_cliente': cliente.codigo_cliente,
+                'nombre_contacto': cliente.nombre_contacto,
+                'nombre_negocio': cliente.nombre_negocio
+            }
+            
+            # Agregar detalles de la venta
+            detalles = DetalleVentaRepo.get_by_venta_id(venta.id)
+            venta_dict['detalles'] = [detalle.to_dict() for detalle in detalles]
+            
+            # Agregar pagos de la venta
+            pagos = PagoRepo.get_by_venta_id(venta.id)
+            venta_dict['pagos'] = [pago.to_dict() for pago in pagos]
+            
+            ventas_con_detalles.append(venta_dict)
+        
+        return ventas_con_detalles, None
+    
+    @staticmethod
+    def get_resumen_ventas_cliente(cliente_id):
+        """Obtener resumen de ventas de un cliente"""
+        from app.repositories.clientes_repo import ClienteRepo
+        from decimal import Decimal
+        
+        cliente = ClienteRepo.get(cliente_id)
+        if not cliente:
+            return None, "Cliente no encontrado"
+        
+        ventas = VentaRepo.get_by_cliente_id(cliente_id)
+        
+        total_ventas = len(ventas)
+        total_monto = sum(float(venta.total_venta) for venta in ventas)
+        total_pagado = sum(float(venta.total_venta - venta.saldo_pendiente) for venta in ventas)
+        total_pendiente = sum(float(venta.saldo_pendiente) for venta in ventas)
+        
+        ventas_vigentes = len([v for v in ventas if v.estado_venta == 'Vigente'])
+        ventas_anuladas = len([v for v in ventas if v.estado_venta == 'Anulada'])
+        
+        ventas_pendientes_cobro = len([v for v in ventas if v.estado_cobro in ['Pendiente', 'Parcial']])
+        ventas_pendientes_entrega = len([v for v in ventas if v.estado_entrega == 'Pendiente'])
+        
+        return {
+            'cliente': {
+                'id': cliente.id,
+                'codigo_cliente': cliente.codigo_cliente,
+                'nombre_contacto': cliente.nombre_contacto,
+                'nombre_negocio': cliente.nombre_negocio
+            },
+            'resumen': {
+                'total_ventas': total_ventas,
+                'total_monto': round(total_monto, 2),
+                'total_pagado': round(total_pagado, 2),
+                'total_pendiente': round(total_pendiente, 2),
+                'ventas_vigentes': ventas_vigentes,
+                'ventas_anuladas': ventas_anuladas,
+                'ventas_pendientes_cobro': ventas_pendientes_cobro,
+                'ventas_pendientes_entrega': ventas_pendientes_entrega
+            }
+        }, None
 
 class ComisionService:
     @staticmethod

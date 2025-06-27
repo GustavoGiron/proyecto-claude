@@ -65,6 +65,7 @@ CREATE TABLE Productos (
     FechaModificacion DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     UsuarioCreacion VARCHAR(50),
     UsuarioModificacion VARCHAR(50),
+    EstadoProducto VARCHAR(50) DEFAULT 'Activo' 
 );
 
 -- Tabla IngresosMercancia

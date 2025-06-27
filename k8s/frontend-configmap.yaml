@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: frontend-config
-data:
-  API_URL: "http://34.121.52.166:5000"
-  ENVIRONMENT: "production"

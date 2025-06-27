@@ -2,14 +2,17 @@ from flask import Blueprint, jsonify, request
 from app.services.vendedores_service import VendedorService
 from app.dtos.vendedores_dto import VendedorSchema
 from app.utils.logger import handle_exceptions
+from app.utils.auth_middleware import token_required, require_permission
 
 vendedores_bp = Blueprint('vendedores_bp', __name__)
 vendedor_schema = VendedorSchema()
 vendedores_schema = VendedorSchema(many=True)
 
 @vendedores_bp.route('/', methods=['GET'])
+@token_required
+@require_permission('Vendedores', 'read')
 @handle_exceptions(servicio='Vendedores', cod_mensaje=5001)
-def get_vendedores():
+def get_vendedores(current_user):
     """
     Listar todos los vendedores
     ---
@@ -48,8 +51,10 @@ def get_vendedores():
     return jsonify(vendedores), 200
 
 @vendedores_bp.route('/<int:id>', methods=['GET'])
+@token_required
+@require_permission('Vendedores', 'read')
 @handle_exceptions(servicio='Vendedores', cod_mensaje=5002)
-def get_vendedor(id):
+def get_vendedor(current_user, id):
     """
     Obtener vendedor por ID
     ---
@@ -80,8 +85,10 @@ def get_vendedor(id):
     return jsonify(vendedor), 200
 
 @vendedores_bp.route('/codigo/<string:codigo>', methods=['GET'])
+@token_required
+@require_permission('Vendedores', 'read')
 @handle_exceptions(servicio='Vendedores', cod_mensaje=5002)
-def get_vendedor_by_codigo(codigo):
+def get_vendedor_by_codigo(current_user, codigo):
     """
     Obtener vendedor por código
     ---
@@ -112,8 +119,10 @@ def get_vendedor_by_codigo(codigo):
     return jsonify(vendedor), 200
 
 @vendedores_bp.route('/', methods=['POST'])
+@token_required
+@require_permission('Vendedores', 'create')
 @handle_exceptions(servicio='Vendedores', cod_mensaje=5003)
-def create_vendedor():
+def create_vendedor(current_user):
     """
     Crear nuevo vendedor
     ---
@@ -171,7 +180,7 @@ def create_vendedor():
     if not data:
         return jsonify({"error": "No se proporcionaron datos"}), 400
     
-    usuario_creacion = request.headers.get('X-Usuario', 'sistema')
+    usuario_creacion = current_user.username
     vendedor, error = VendedorService.create_vendedor(data, usuario_creacion)
     
     if error:
@@ -180,8 +189,10 @@ def create_vendedor():
     return jsonify(vendedor), 201
 
 @vendedores_bp.route('/<int:id>', methods=['PUT'])
+@token_required
+@require_permission('Vendedores', 'update')
 @handle_exceptions(servicio='Vendedores', cod_mensaje=5004)
-def update_vendedor(id):
+def update_vendedor(current_user, id):
     """
     Actualizar vendedor existente
     ---
@@ -247,7 +258,7 @@ def update_vendedor(id):
     if not data:
         return jsonify({"error": "No se proporcionaron datos"}), 400
     
-    usuario_modificacion = request.headers.get('X-Usuario', 'sistema')
+    usuario_modificacion = current_user.username
     vendedor, error = VendedorService.update_vendedor(id, data, usuario_modificacion)
     
     if error:
@@ -258,8 +269,10 @@ def update_vendedor(id):
     return jsonify(vendedor), 200
 
 @vendedores_bp.route('/codigo/<string:codigo>', methods=['PUT'])
+@token_required
+@require_permission('Vendedores', 'update')
 @handle_exceptions(servicio='Vendedores', cod_mensaje=5004)
-def update_vendedor_by_codigo(codigo):
+def update_vendedor_by_codigo(current_user, codigo):
     """
     Actualizar vendedor por código
     ---
@@ -306,7 +319,7 @@ def update_vendedor_by_codigo(codigo):
     if not data:
         return jsonify({"error": "No se proporcionaron datos"}), 400
     
-    usuario_modificacion = request.headers.get('X-Usuario', 'sistema')
+    usuario_modificacion = current_user.username
     vendedor, error = VendedorService.update_vendedor_by_codigo(codigo, data, usuario_modificacion)
     
     if error:
@@ -317,8 +330,10 @@ def update_vendedor_by_codigo(codigo):
     return jsonify(vendedor), 200
 
 @vendedores_bp.route('/<int:id>', methods=['DELETE'])
+@token_required
+@require_permission('Vendedores', 'delete')
 @handle_exceptions(servicio='Vendedores', cod_mensaje=5005)
-def delete_vendedor(id):
+def delete_vendedor(current_user, id):
     """
     Eliminar vendedor
     ---
@@ -356,8 +371,10 @@ def delete_vendedor(id):
     return jsonify({"message": "Vendedor eliminado exitosamente"}), 200
 
 @vendedores_bp.route('/codigo/<string:codigo>', methods=['DELETE'])
+@token_required
+@require_permission('Vendedores', 'delete')
 @handle_exceptions(servicio='Vendedores', cod_mensaje=5005)
-def delete_vendedor_by_codigo(codigo):
+def delete_vendedor_by_codigo(current_user, codigo):
     """
     Eliminar vendedor por código
     ---
